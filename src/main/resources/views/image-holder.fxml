@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.image.*?>
+<?import javafx.scene.layout.*?>
+
+<VBox stylesheets="@../main.css" alignment="CENTER" styleClass="img-holder" xmlns="http://javafx.com/javafx/11.0.14-internal" xmlns:fx="http://javafx.com/fxml/1">
+   <children>
+      <ImageView id="image-holder" pickOnBounds="true" preserveRatio="true" VBox.vgrow="SOMETIMES" />
+   </children>
+</VBox>

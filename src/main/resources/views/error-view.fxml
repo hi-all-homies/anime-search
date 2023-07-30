@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.*?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.image.*?>
+<?import javafx.scene.layout.*?>
+
+<VBox stylesheets="@../main.css" alignment="CENTER" spacing="25.0" xmlns="http://javafx.com/javafx/11.0.14-internal" xmlns:fx="http://javafx.com/fxml/1" fx:controller="app.controllers.ErrorViewController">
+   <padding>
+      <Insets bottom="5.0" left="5.0" right="5.0" top="5.0" />
+   </padding>
+   <children>
+      <Label fx:id="title" />
+      <HBox alignment="CENTER" VBox.vgrow="SOMETIMES">
+         <children>
+            <ImageView fx:id="imageView" pickOnBounds="true" preserveRatio="true" HBox.hgrow="SOMETIMES">
+
+            </ImageView>
+         </children>
+      </HBox>
+   </children>
+</VBox>

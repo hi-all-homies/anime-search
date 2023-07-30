@@ -1,0 +1,53 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.*?>
+<?import javafx.scene.chart.*?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+
+<AnchorPane stylesheets="@../main.css" xmlns="http://javafx.com/javafx/11.0.14-internal" xmlns:fx="http://javafx.com/fxml/1" fx:controller="app.controllers.FavoritesController">
+   <padding>
+      <Insets bottom="5.0" left="5.0" right="5.0" top="5.0" />
+   </padding>
+   <children>
+      <TabPane tabClosingPolicy="UNAVAILABLE" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+        <tabs>
+          <Tab text="list">
+            <content>
+              <AnchorPane>
+                     <children>
+                        <Pagination fx:id="pagination" maxPageIndicatorCount="7" pageCount="1" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0" />
+                     </children></AnchorPane>
+            </content>
+          </Tab>
+
+            <Tab fx:id="genreTab" text="genres / themes">
+                <content>
+                    <AnchorPane>
+                        <children>
+                        <BorderPane AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+                           <center>
+                                    <PieChart fx:id="genresPie" prefHeight="400.0" prefWidth="500.0" BorderPane.alignment="CENTER" />
+                           </center>
+                           <top>
+                              <HBox alignment="CENTER" spacing="15.0" BorderPane.alignment="CENTER">
+                                 <children>
+                                     <Slider fx:id="slider" blockIncrement="1.0" majorTickUnit="1.0" max="1.0" minorTickCount="0" prefWidth="60.0" snapToTicks="true">
+                                         <tooltip><Tooltip text="switches between genres &amp; themes" /></tooltip>
+                                     </Slider>
+                                    <Label fx:id="indicator" text="genres by a year" />
+                                    <ChoiceBox fx:id="yearChoice" prefWidth="90.0" />
+                                 </children>
+                              </HBox>
+                           </top>
+                           <bottom>
+                              <Label fx:id="percents" BorderPane.alignment="CENTER" />
+                           </bottom>
+                        </BorderPane>
+                        </children></AnchorPane>
+                </content>
+            </Tab>
+        </tabs>
+      </TabPane>
+   </children>
+</AnchorPane>

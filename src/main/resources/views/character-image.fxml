@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.*?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.image.*?>
+<?import javafx.scene.layout.*?>
+
+<VBox stylesheets="@../main.css" alignment="TOP_CENTER" spacing="5.0" xmlns="http://javafx.com/javafx/11.0.14-internal" xmlns:fx="http://javafx.com/fxml/1" fx:controller="app.controllers.CharacterImageController">
+   <children>
+      <Label fx:id="name" />
+      <Label fx:id="role" />
+      <VBox alignment="TOP_CENTER" styleClass="img-holder" VBox.vgrow="NEVER">
+         <children>
+            <ImageView fx:id="image" fitHeight="300.0" fitWidth="200.0" pickOnBounds="true" preserveRatio="true">
+               <cursor>
+                  <Cursor fx:constant="HAND" />
+               </cursor></ImageView>
+         </children>
+      </VBox>
+   </children>
+</VBox>

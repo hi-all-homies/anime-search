@@ -1,0 +1,66 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.*?>
+<?import javafx.scene.*?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.image.*?>
+<?import javafx.scene.layout.*?>
+<?import javafx.scene.text.*?>
+
+<HBox stylesheets="@../main.css" spacing="15.0" styleClass="background-list" xmlns="http://javafx.com/javafx/11.0.14-internal" xmlns:fx="http://javafx.com/fxml/1" fx:controller="app.controllers.AnimeController">
+   <children>
+      <VBox spacing="10.0">
+         <children>
+            <VBox styleClass="img-holder" VBox.vgrow="NEVER">
+               <children>
+                  <ImageView fx:id="img" onMouseClicked="#submitOnClick" pickOnBounds="true" preserveRatio="true">
+                     <cursor>
+                        <Cursor fx:constant="HAND" />
+                     </cursor>
+                  </ImageView>
+               </children>
+            </VBox>
+         </children>
+         <padding>
+            <Insets bottom="10.0" left="10.0" right="10.0" top="10.0" />
+         </padding>
+      </VBox>
+      <VBox spacing="10.0" HBox.hgrow="SOMETIMES">
+         <children>
+            <HBox alignment="TOP_CENTER" VBox.vgrow="SOMETIMES">
+               <children>
+                  <Label fx:id="title" onMouseClicked="#submitOnClick" styleClass="titles">
+                     <cursor>
+                        <Cursor fx:constant="HAND" />
+                     </cursor>
+                  </Label>
+               </children>
+            </HBox>
+            <Label fx:id="score" VBox.vgrow="SOMETIMES">
+               <VBox.margin>
+                  <Insets bottom="10.0" />
+               </VBox.margin>
+            </Label>
+            <Label fx:id="year" VBox.vgrow="SOMETIMES">
+               <VBox.margin>
+                  <Insets bottom="10.0" />
+               </VBox.margin>
+            </Label>
+            <Label fx:id="rating" VBox.vgrow="SOMETIMES">
+               <VBox.margin>
+                  <Insets bottom="10.0" />
+               </VBox.margin>
+            </Label>
+            <Label fx:id="episodes" />
+            <Label fx:id="status" />
+            <TextFlow fx:id="textFlow" lineSpacing="5.0" prefWidth="200.0" VBox.vgrow="SOMETIMES">
+               <padding>
+                  <Insets bottom="5.0" left="5.0" right="5.0" top="5.0" />
+               </padding>
+               <VBox.margin>
+                  <Insets />
+               </VBox.margin></TextFlow>
+         </children>
+      </VBox>
+   </children>
+</HBox>

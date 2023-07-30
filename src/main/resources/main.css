@@ -1,0 +1,52 @@
+
+.root {
+    -fx-accent: #1e74c6;
+    -fx-focus-color: -fx-accent;
+    -fx-base: #373e43;
+    -fx-control-inner-background: derive(-fx-base, 35%);
+    -fx-control-inner-background-alt: -fx-control-inner-background ;
+
+    -fx-font-size: 14pt;
+    -fx-font-family: "Comic Sans MS";
+}
+
+.label{
+    -fx-text-fill: lightgray;
+}
+
+Text {
+ -fx-fill: whitesmoke;
+}
+
+.text-field {
+    -fx-prompt-text-fill: gray;
+}
+
+.titles{
+    -fx-font-weight: bold;
+    -fx-text-fill: whitesmoke;
+}
+
+.button{
+    -fx-focus-traversable: false;
+}
+
+.button:hover{
+    -fx-text-fill: white;
+}
+
+.scroll-bar{
+    -fx-background-color: derive(-fx-base,45%)
+}
+
+.button:default {
+    -fx-base: -fx-accent ;
+}
+
+.background-list{
+    -fx-background-color: derive(-fx-base, 15%);
+}
+
+.img-holder{
+    -fx-border-color: crimson;
+}
