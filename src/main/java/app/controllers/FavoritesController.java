@@ -1,12 +1,12 @@
 package app.controllers;
 
-import app.config.ContainerHolder;
 import app.model.anime.Anime;
 import app.model.anime.enums.Genre;
 import app.model.anime.GenreEntity;
 import app.model.request.SearchRequest;
+import app.service.injector.ViewInjector;
 import app.util.DataTransferService;
-import app.util.RequestPublisher;
+import io.reactivex.rxjava3.subjects.Subject;
 import javafx.animation.TranslateTransition;
 import javafx.beans.binding.Bindings;
 import javafx.beans.binding.DoubleBinding;
@@ -29,14 +29,12 @@ import javafx.stage.Stage;
 import javafx.stage.StageStyle;
 import javafx.util.Duration;
 import java.util.*;
-import java.util.concurrent.ConcurrentMap;
 import java.util.function.Consumer;
-import app.injector.ViewInjector;
 
 public class FavoritesController {
 
     public Pagination pagination;
-    private ConcurrentMap<Integer, Anime> likedAnime;
+    private final Map<Integer, Anime> likedAnime;
 
     public Tab genreTab;
     public PieChart genresPie;
@@ -46,17 +44,19 @@ public class FavoritesController {
     public Label indicator;
     private DoubleBinding genresTotal;
 
-    private RequestPublisher reqPublisher;
-    private DataTransferService dataService;
-    private ViewInjector viewInjector;
+    private final Subject<SearchRequest> reqPublisher;
+    private final DataTransferService dataService;
+    private final ViewInjector viewInjector;
+
+
+    public FavoritesController(Map<Integer, Anime> likedAnime, Subject<SearchRequest> reqPublisher, DataTransferService dataService, ViewInjector viewInjector) {
+        this.likedAnime = likedAnime;
+        this.reqPublisher = reqPublisher;
+        this.dataService = dataService;
+        this.viewInjector = viewInjector;
+    }
 
     public void initialize() {
-        var container = ContainerHolder.INSTANCE.getContainer();
-        this.likedAnime = container.getLikedAnime();
-        this.reqPublisher = container.getRequestPublisher();
-        this.dataService = container.getDataTransferService();
-        this.viewInjector = container.getViewInjector();
-
         this.initLikedList();
 
         this.slider.valueProperty()
@@ -269,7 +269,7 @@ public class FavoritesController {
             var go = new MenuItem("go to the anime");
             go.setOnAction(event -> {
                 dataService.setRequestType(dataService.getReqHistory());
-                reqPublisher.publishRequest(new SearchRequest(item.id()));
+                reqPublisher.onNext(new SearchRequest(item.id()));
             });
 
             this.menu.getItems().addAll(go, delete);

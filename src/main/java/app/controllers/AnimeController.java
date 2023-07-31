@@ -1,12 +1,11 @@
 package app.controllers;
 
-import app.config.ContainerHolder;
-import app.injector.ViewInjector;
 import app.model.anime.Anime;
 import app.model.anime.enums.Status;
 import app.model.request.SearchRequest;
+import app.service.injector.ViewInjector;
 import app.util.DataTransferService;
-import javafx.event.EventHandler;
+import io.reactivex.rxjava3.subjects.Subject;
 import javafx.scene.Scene;
 import javafx.scene.control.Label;
 import javafx.scene.image.Image;
@@ -32,19 +31,25 @@ public class AnimeController {
     private Stage stage;
 
     private Anime anime;
-    private ViewInjector viewInjector;
+    private final ViewInjector viewInjector;
 
-    private DataTransferService dataService;
+    private final Subject<SearchRequest> publisher;
+
+    private final DataTransferService dataService;
+
+
+    public AnimeController(ViewInjector viewInjector, Subject<SearchRequest> publisher, DataTransferService dataService) {
+        this.viewInjector = viewInjector;
+        this.dataService = dataService;
+        this.publisher = publisher;
+    }
 
     public  void initialize(){
-        var container = ContainerHolder.INSTANCE.getContainer();
-        this.viewInjector = container.getViewInjector();
-        this.dataService = container.getDataTransferService();
         this.anime = this.dataService.getAnime();
 
         this.setFields();
 
-        this.img.setOnMouseEntered(this.cursorEntered);
+        this.img.setOnMouseEntered(this::cursorEntered);
 
         this.img.setOnMouseExited(event -> this.stage.close());
     }
@@ -56,9 +61,7 @@ public class AnimeController {
 
             this.dataService.setReqHistory(this.dataService.getRequestType());
 
-            ContainerHolder.INSTANCE.getContainer()
-                        .getRequestPublisher()
-                        .publishRequest(new SearchRequest(this.anime.id()));
+            this.publisher.onNext(new SearchRequest(this.anime.id()));
         }
     }
 
@@ -93,7 +96,7 @@ public class AnimeController {
     }
 
 
-    private final EventHandler<MouseEvent> cursorEntered = event -> {
+    private void cursorEntered (MouseEvent event){
         this.stage = new Stage();
         this.stage.initOwner(this.img.getScene().getWindow());
         this.stage.initStyle(StageStyle.UNDECORATED);
@@ -111,5 +114,5 @@ public class AnimeController {
         Scene scene = new Scene(imgHolder);
         this.stage.setScene(scene);
         this.stage.show();
-    };
+    }
 }

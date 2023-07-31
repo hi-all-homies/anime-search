@@ -1,6 +1,5 @@
 package app.util;
 
-import app.config.ContainerHolder;
 import app.model.anime.Anime;
 import java.io.*;
 import java.nio.file.Files;
@@ -9,19 +8,26 @@ import java.util.Map;
 
 public class LikedStorage {
 
+    private final Map<Integer, Anime> likedAnime;
+
     private static final String DIR = "anime-search";
     private static final String FILE_NAME = "liked.ser";
     private static final String USER_HOME = "user.home";
 
+
+    public LikedStorage(Map<Integer, Anime> likedAnime) {
+        this.likedAnime = likedAnime;
+    }
+
+
     public void storeLiked() {
-        var likedAnime = ContainerHolder.INSTANCE.getContainer().getLikedAnime();
         File likedFile = this.getLikedFile();
 
         try (
                 FileOutputStream outStream = new FileOutputStream(likedFile);
                 ObjectOutputStream writer = new ObjectOutputStream(outStream)) {
 
-            writer.writeObject(likedAnime);
+            writer.writeObject(this.likedAnime);
 
             } catch (IOException e) {
                 throw new RuntimeException(e.getMessage());
@@ -32,15 +38,13 @@ public class LikedStorage {
     @SuppressWarnings("unchecked")
     public void loadLiked(){
         File likedFile = this.getLikedFile();
-        var likedAnime = ContainerHolder.INSTANCE.getContainer().getLikedAnime();
-
         try (
                 FileInputStream input = new FileInputStream(likedFile);
                 ObjectInputStream reader = new ObjectInputStream(input)){
 
             var result = reader.readObject();
             if (result != null){
-                likedAnime.putAll((Map<Integer, Anime>) result);
+                this.likedAnime.putAll((Map<Integer, Anime>) result);
             }
         }
         catch (IOException | ClassNotFoundException e){

@@ -1,4 +1,4 @@
-package app.injector;
+package app.service.injector;
 
 import javafx.fxml.FXMLLoader;
 import javafx.fxml.JavaFXBuilderFactory;
@@ -7,13 +7,13 @@ import java.io.IOException;
 import java.lang.reflect.InvocationTargetException;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.concurrent.Callable;
+import java.util.function.Supplier;
 
-public class ViewInjector {
+public class DefaultViewInjector implements ViewInjector{
 
-    private final Map<Class<?>, Callable<?>> injectMethods = new HashMap<>();
+    private final Map<Class<?>, Supplier<?>> injectMethods = new HashMap<>();
 
-    public ViewInjector(){}
+    public DefaultViewInjector(){}
 
     public Parent load(final String location) {
         try {
@@ -25,7 +25,7 @@ public class ViewInjector {
 
 
     private FXMLLoader createLoader(String location){
-        var loader = new FXMLLoader(ViewInjector.class.getResource(location));
+        var loader = new FXMLLoader(DefaultViewInjector.class.getResource(location));
         loader.setBuilderFactory(new JavaFXBuilderFactory());
         loader.setControllerFactory(this::getController);
         return loader;
@@ -41,7 +41,7 @@ public class ViewInjector {
 
     private Object getControllerWithSavedMethod(Class<?> clazz){
         try {
-            return injectMethods.get(clazz).call();
+            return injectMethods.get(clazz).get();
         } catch (Exception e) {
             throw new IllegalStateException(e);
         }
@@ -56,7 +56,7 @@ public class ViewInjector {
         }
     }
 
-    public void addMethod(Class<?> clazz, Callable<?> callback){
+    public void addMethod(Class<?> clazz, Supplier<?> callback){
         this.injectMethods.put(clazz, callback);
     }
 }

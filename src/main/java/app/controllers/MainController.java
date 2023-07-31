@@ -2,13 +2,13 @@ package app.controllers;
 
 import java.util.Arrays;
 import java.util.List;
-import app.config.ContainerHolder;
 import static app.model.request.RequestType.*;
 import app.model.anime.enums.Genre;
 import app.model.request.SearchRequest;
 import app.model.request.RequestType;
+import app.service.injector.ViewInjector;
 import app.util.DataTransferService;
-import app.util.RequestPublisher;
+import io.reactivex.rxjava3.subjects.Subject;
 import javafx.animation.PauseTransition;
 import javafx.application.Platform;
 import javafx.collections.FXCollections;
@@ -19,7 +19,6 @@ import javafx.scene.control.*;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.TilePane;
 import javafx.util.Duration;
-import static app.config.Container.LIMIT;
 
 
 public class MainController {
@@ -36,25 +35,27 @@ public class MainController {
     public TilePane checkBoxPane;
     private final ObservableMap<Integer, CheckBox> genreChoices = FXCollections.observableHashMap();
 
-    private RequestPublisher reqPublisher;
+    private final Subject<SearchRequest> reqPublisher;
+    private final ViewInjector viewInjector;
+    private final DataTransferService dataService;
 
-
-    private DataTransferService dataService;
-
+    public static final int LIMIT = 7;
     final PauseTransition pause = new PauseTransition(Duration.millis(2000));
 
-    public void initialize() {
-        var container = ContainerHolder.INSTANCE.getContainer();
-        var viewInjector = container.getViewInjector();
-        this.reqPublisher = container.getRequestPublisher();
-        this.dataService = container.getDataTransferService();
 
+    public MainController(Subject<SearchRequest> reqPublisher, ViewInjector viewInjector, DataTransferService dataService) {
+        this.reqPublisher = reqPublisher;
+        this.viewInjector = viewInjector;
+        this.dataService = dataService;
+    }
+
+    public void initialize() {
         this.checkBoxPane.getChildren().addAll(this.initCheckBoxes());
 
         this.dataService.setGenreChoices(this.genreChoices);
         this.dataService.setSearchField(this.searchField);
 
-        var animeList = viewInjector.load("/views/anime-list.fxml");
+        var animeList = this.viewInjector.load("/views/anime-list.fxml");
         this.contentHolder.setCenter(animeList);
 
         this.pause.setOnFinished(event -> Platform.runLater(() -> this.prepareToEmmit(SEARCH)));
@@ -103,7 +104,7 @@ public class MainController {
         var ids = this.dataService.getSelectedGenres();
         var request = new SearchRequest(this.dataService.getRequestType(), 0,
                 this.searchField.getText(), this.dataService.getPage().get(), LIMIT, ids);
-        this.reqPublisher.publishRequest(request);
+        this.reqPublisher.onNext(request);
     }
 
 

@@ -1,6 +1,6 @@
 package app.controllers;
 
-import app.config.ContainerHolder;
+import app.util.DataTransferService;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.control.ContextMenu;
@@ -28,10 +28,14 @@ public class CharacterImageController {
 
     private ContextMenu menu;
 
+    private final DataTransferService dataService;
+
+    public CharacterImageController(DataTransferService dataService) {
+        this.dataService = dataService;
+    }
 
     public void initialize(){
-        var dataService = ContainerHolder.INSTANCE.getContainer().getDataTransferService();
-        var personage = dataService.getPersonage();
+        var personage = this.dataService.getPersonage();
 
         this.name.setText(personage.character().name());
         this.role.setText(personage.role().name());

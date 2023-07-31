@@ -1,18 +1,22 @@
 package app.service;
 
 import static org.junit.jupiter.api.Assertions.*;
+
+import app.service.anime.AnimeService;
+import app.service.anime.DefaultAnimeService;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Order;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.TestInstance;
+import java.net.http.HttpClient;
 
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
 class DefaultAnimeServiceTest {
-    private  AnimeService animeService;
+    private AnimeService animeService;
 
     @BeforeAll
     void init(){
-        this.animeService = new DefaultAnimeService();
+        this.animeService = new DefaultAnimeService(HttpClient.newBuilder());
     }
 
 

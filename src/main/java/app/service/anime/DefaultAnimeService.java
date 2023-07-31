@@ -1,4 +1,4 @@
-package app.service;
+package app.service.anime;
 
 import app.model.anime.Anime;
 import app.model.personage.Personage;
@@ -26,8 +26,8 @@ public class DefaultAnimeService implements AnimeService{
 
     public static final String BASE_URL = "https://api.jikan.moe/v4/";
 
-    public DefaultAnimeService() {
-        this.httpClient = HttpClient.newBuilder().build();
+    public DefaultAnimeService(HttpClient.Builder builder) {
+        this.httpClient = builder.build();
         this.mapper = new ObjectMapper();
     }
 

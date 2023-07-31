@@ -1,15 +1,15 @@
 package app.controllers;
 
-import static app.config.Container.LIMIT;
-import app.config.ContainerHolder;
+import static app.controllers.MainController.LIMIT;
 import app.exceptions.NotFoundException;
-import app.injector.ViewInjector;
 import app.model.anime.Anime;
 import app.model.request.RequestType;
 import app.model.request.SearchRequest;
-import app.service.AnimeService;
+import app.service.anime.AnimeService;
+import app.service.injector.ViewInjector;
 import app.util.DataTransferService;
-import app.util.RequestPublisher;
+import io.reactivex.rxjava3.core.ObservableSource;
+import io.reactivex.rxjava3.subjects.Subject;
 import javafx.application.Platform;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
@@ -19,12 +19,10 @@ import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.VBox;
 import java.util.List;
 import java.util.concurrent.atomic.AtomicInteger;
-import java.util.function.Consumer;
 
 
 public class AnimeListController {
     public VBox list;
-    public AnimeService animeService;
     public BorderPane single;
     public ScrollPane listScroll;
     private final AtomicInteger page = new AtomicInteger(1);
@@ -33,30 +31,32 @@ public class AnimeListController {
     public Label title;
     public Button backBtn;
 
-    private ViewInjector viewInjector;
-    private DataTransferService dataService;
-    private RequestPublisher reqPublisher;
+    private final AnimeService animeService;
+    private final ViewInjector viewInjector;
+    private final DataTransferService dataService;
+    private final Subject<SearchRequest> reqPublisher;
 
+
+    public AnimeListController(AnimeService animeService, ViewInjector viewInjector, DataTransferService dataService, Subject<SearchRequest> reqPublisher) {
+        this.animeService = animeService;
+        this.viewInjector = viewInjector;
+        this.dataService = dataService;
+        this.reqPublisher = reqPublisher;
+    }
 
     public void initialize(){
-        var container = ContainerHolder.INSTANCE.getContainer();
         this.single.setVisible(false);
         this.listScroll.visibleProperty().bind(this.single.visibleProperty().not());
 
-        this.viewInjector = container.getViewInjector();
-        this.reqPublisher = container.getRequestPublisher();
-        this.animeService = container.getAnimeService();
-        this.dataService = container.getDataTransferService();
-
         this.dataService.setPage(this.page);
         this.addScrollBarListener();
-        this.reqPublisher.addObserver(filterRequests);
+        this.reqPublisher.subscribe(this::filterRequests);
     }
 
 
     public void submitBack() {
         this.dataService.setRequestType(this.dataService.getReqHistory());
-        this.reqPublisher.publishRequest(new SearchRequest(RequestType.HISTORY));
+        this.reqPublisher.onNext(new SearchRequest(RequestType.HISTORY));
     }
 
 
@@ -67,15 +67,13 @@ public class AnimeListController {
     private final List<RequestType> reqMarks = List.of(RequestType.SEARCH, RequestType.TOP, RequestType.NOW);
 
 
-    private final Consumer<SearchRequest> filterRequests = req -> {
+    private void filterRequests (final SearchRequest req) {
         if (this.reqMarks.contains(req.type()) && req.page() <= 1)
             this.list.getChildren().clear();
 
         switch (req.type()) {
             case SEARCH -> this.animeService.findByQuery(req.query(), req.page(), req.limit(), req.genres())
-                    .switchIfEmpty(data -> {
-                        if (req.page() <= 1)
-                            throw new NotFoundException("search query doesn't match any result");})
+                    .switchIfEmpty(this.handleEmpty(req))
                     .doOnError(this::handleExceptions)
                     .subscribe(this::addToList);
 
@@ -95,7 +93,8 @@ public class AnimeListController {
 
             case HISTORY -> this.single.setVisible(false);
         }
-    };
+    }
+
 
     private void addToList(Anime anime){
         var node = this.prepareNode(LISTED_ANIME, anime);
@@ -158,7 +157,7 @@ public class AnimeListController {
                 var request = new SearchRequest(this.dataService.getRequestType(), 0,
                         this.dataService.getSearchField().getText(), currPage, LIMIT, ids);
 
-                this.reqPublisher.publishRequest(request);
+                this.reqPublisher.onNext(request);
             }
         });
     }
@@ -173,5 +172,12 @@ public class AnimeListController {
             this.single.setVisible(true);
             this.singleScroll.setContent(errNode);
         });
+    }
+
+    private ObservableSource<Anime> handleEmpty(SearchRequest req) {
+        return anime -> {
+            if (req.page() <= 1)
+                this.handleExceptions(new NotFoundException("search query doesn't match any result"));
+        };
     }
 }

@@ -1,60 +1,70 @@
 package app.config;
 
-import app.injector.ViewInjector;
+import app.controllers.*;
 import app.model.anime.Anime;
-import app.service.AnimeService;
+import app.model.request.SearchRequest;
+import app.service.anime.AnimeService;
+import app.service.anime.DefaultAnimeService;
+import app.service.injector.DefaultViewInjector;
+import app.service.injector.ViewInjector;
 import app.util.DataTransferService;
-import app.service.DefaultAnimeService;
 import app.util.LikedStorage;
-import app.util.RequestPublisher;
+import io.reactivex.rxjava3.subjects.BehaviorSubject;
+import io.reactivex.rxjava3.subjects.Subject;
+import io.reactivex.rxjava3.subjects.UnicastSubject;
 import java.net.http.HttpClient;
 import java.time.Duration;
-import java.util.concurrent.*;
+import java.util.HashMap;
+import java.util.Map;
 
 public class Container {
-
-    private ConcurrentMap<Integer, Anime> likedAnime;
-
     private ViewInjector viewInjector;
-
     private LikedStorage likedStorage;
+    private Subject<SearchRequest> reqPublisher;
 
-    private AnimeService animeService;
+    public Container() {}
 
-    private RequestPublisher requestPublisher;
+    public Container initServices(){
+        this.viewInjector = new DefaultViewInjector();
 
-    private DataTransferService dataTransferService;
+        Map<Integer, Anime> likedAnime = new HashMap<>(100);
+        this.likedStorage = new LikedStorage(likedAnime);
 
-    private ExecutorService httpPool;
-
-    public static final int LIMIT = 7;
-
-
-    protected Container (){}
-
-    public void init(){
-        this.likedAnime = new ConcurrentHashMap<>(100);
-        this.viewInjector = new ViewInjector();
-        this.likedStorage = new LikedStorage();
-        this.requestPublisher = new RequestPublisher();
-
-        this.httpPool = Executors.newFixedThreadPool(3);
+        this.reqPublisher = UnicastSubject.create();
 
         var builder = HttpClient.newBuilder()
-                .connectTimeout(Duration.ofMillis(3500))
-                .executor(this.httpPool);
+                .connectTimeout(Duration.ofMillis(3500));
+        AnimeService animeService = new DefaultAnimeService(builder);
 
-        this.animeService = new DefaultAnimeService();
+        var dataService = new DataTransferService();
 
-        this.dataTransferService = new DataTransferService();
-    }
+        Subject<String> closeEmitter = BehaviorSubject.create();
 
-    public RequestPublisher getRequestPublisher() {
-        return requestPublisher;
-    }
+        viewInjector.addMethod(AnimeController.class,
+                () -> new AnimeController(viewInjector, reqPublisher, dataService));
 
-    public ConcurrentMap<Integer, Anime> getLikedAnime() {
-        return likedAnime;
+        viewInjector.addMethod(AnimeListController.class,
+                () -> new AnimeListController(animeService, viewInjector, dataService, reqPublisher));
+
+        viewInjector.addMethod(SingleAnimeController.class,
+                ()->new SingleAnimeController(dataService,animeService,viewInjector,likedAnime,closeEmitter));
+
+        viewInjector.addMethod(CharacterImageController.class,
+                () -> new CharacterImageController(dataService));
+
+        viewInjector.addMethod(ErrorViewController.class,
+                () -> new ErrorViewController(dataService));
+
+        viewInjector.addMethod(FavoritesController.class,
+                () -> new FavoritesController(likedAnime, reqPublisher, dataService, viewInjector));
+
+        viewInjector.addMethod(MainController.class,
+                () -> new MainController(reqPublisher, viewInjector, dataService));
+
+        viewInjector.addMethod(TrailerController.class,
+                () -> new TrailerController(dataService, closeEmitter));
+
+        return this;
     }
 
     public ViewInjector getViewInjector() {
@@ -65,15 +75,7 @@ public class Container {
         return likedStorage;
     }
 
-    public AnimeService getAnimeService() {
-        return animeService;
-    }
-
-    public DataTransferService getDataTransferService() {
-        return dataTransferService;
-    }
-
-    public void shutdownPools(){
-        this.httpPool.shutdownNow();
+    public Subject<SearchRequest> getReqPublisher() {
+        return reqPublisher;
     }
 }

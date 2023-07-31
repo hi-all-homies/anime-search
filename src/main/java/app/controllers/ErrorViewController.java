@@ -1,7 +1,7 @@
 package app.controllers;
 
-import app.config.ContainerHolder;
 import app.exceptions.NotFoundException;
+import app.util.DataTransferService;
 import javafx.scene.control.Label;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
@@ -12,10 +12,14 @@ public class ErrorViewController {
     public Label title;
     public ImageView imageView;
 
+    private final DataTransferService dataService;
+
+    public ErrorViewController(DataTransferService dataService) {
+        this.dataService = dataService;
+    }
 
     public void initialize(){
-        var error = ContainerHolder.INSTANCE.getContainer()
-                .getDataTransferService().getError().getCause();
+        var error = this.dataService.getError();
 
         Image errImage;
 

@@ -3,6 +3,7 @@
 <?import javafx.geometry.*?>
 <?import javafx.scene.control.*?>
 <?import javafx.scene.layout.*?>
+<?import org.kordamp.ikonli.javafx.*?>
 
 <AnchorPane prefHeight="400.0" prefWidth="600.0" stylesheets="@../main.css" xmlns="http://javafx.com/javafx/11.0.14-internal" xmlns:fx="http://javafx.com/fxml/1" fx:controller="app.controllers.MainController">
    <children>
@@ -10,12 +11,24 @@
          <children>
             <ToolBar prefHeight="40.0" prefWidth="200.0">
                <items>
-                  <Button fx:id="favorites" mnemonicParsing="false" onAction="#submitFavorites" text="favorites" />
+                  <Button fx:id="favorites" graphicTextGap="10.0" mnemonicParsing="false" onAction="#submitFavorites" text="favorites">
+                     <graphic>
+                        <FontIcon iconColor="azure" iconLiteral="fas-star" iconSize="24" />
+                     </graphic>
+                  </Button>
                   <Pane HBox.hgrow="SOMETIMES" />
                   <TextField fx:id="searchField" promptText="type here anime title or its part" HBox.hgrow="SOMETIMES" />
                   <Pane HBox.hgrow="SOMETIMES" />
-                  <Button fx:id="ongoings" mnemonicParsing="false" onAction="#submitOngoings" text="ongoings" />
-                  <Button fx:id="topRated" mnemonicParsing="false" onAction="#submitTopRated" text="top rated" />
+                  <Button fx:id="ongoings" graphicTextGap="10.0" mnemonicParsing="false" onAction="#submitOngoings" text="ongoings">
+                     <graphic>
+                        <FontIcon iconColor="azure" iconLiteral="fas-broadcast-tower" iconSize="24" />
+                     </graphic>
+                  </Button>
+                  <Button fx:id="topRated" graphicTextGap="10.0" mnemonicParsing="false" onAction="#submitTopRated" text="top rated">
+                     <graphic>
+                        <FontIcon iconColor="azure" iconLiteral="fas-gem" iconSize="24" />
+                     </graphic>
+                  </Button>
                </items>
                <VBox.margin>
                   <Insets bottom="10.0" left="10.0" right="10.0" top="10.0" />
@@ -34,7 +47,11 @@
                                           <TilePane fx:id="checkBoxPane" alignment="TOP_CENTER" hgap="15.0" tileAlignment="TOP_CENTER" vgap="5.0" />
                                        </content>
                                     </ScrollPane>
-                                    <Button fx:id="searchByGenres" mnemonicParsing="false" onAction="#submitSearch" text="search by genres" />
+                                    <Button fx:id="searchByGenres" graphicTextGap="10.0" mnemonicParsing="false" onAction="#submitSearch" text="search by genres">
+                                       <graphic>
+                                          <FontIcon iconColor="azure" iconLiteral="fas-search" iconSize="24" />
+                                       </graphic>
+                                    </Button>
                                  </children>
                               </VBox>
                            </children></AnchorPane>

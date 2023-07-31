@@ -3,6 +3,7 @@
 <?import javafx.geometry.*?>
 <?import javafx.scene.control.*?>
 <?import javafx.scene.layout.*?>
+<?import org.kordamp.ikonli.javafx.*?>
 
 <StackPane stylesheets="@../main.css" xmlns="http://javafx.com/javafx/11.0.14-internal" xmlns:fx="http://javafx.com/fxml/1" fx:controller="app.controllers.AnimeListController">
    <children>
@@ -16,7 +17,11 @@
                   <Pane HBox.hgrow="SOMETIMES" />
                   <Label fx:id="title" styleClass="titles" />
                   <Pane HBox.hgrow="SOMETIMES" />
-                  <Button fx:id="backBtn" mnemonicParsing="false" onAction="#submitBack" text="back" />
+                  <Button fx:id="backBtn" mnemonicParsing="false" onAction="#submitBack">
+                     <graphic>
+                        <FontIcon iconColor="azure" iconLiteral="fas-fast-backward" iconSize="25" />
+                     </graphic>
+                  </Button>
                </children>
                <padding>
                   <Insets bottom="10.0" left="10.0" right="10.0" top="10.0" />

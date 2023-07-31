@@ -1,4 +1,4 @@
-package app.service;
+package app.service.anime;
 
 import app.model.anime.Anime;
 import app.model.personage.Personage;
