@@ -6,7 +6,7 @@
     -fx-control-inner-background: derive(-fx-base, 35%);
     -fx-control-inner-background-alt: -fx-control-inner-background ;
 
-    -fx-font-size: 14pt;
+    -fx-font-size: 13.5pt;
     -fx-font-family: "Comic Sans MS";
 }
 
@@ -49,4 +49,7 @@ Text {
 
 .img-holder{
     -fx-border-color: crimson;
+}
+.filter-box{
+    -fx-font-size: 12.5pt;
 }

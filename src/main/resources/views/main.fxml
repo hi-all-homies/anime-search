@@ -9,24 +9,14 @@
    <children>
       <VBox layoutX="230.0" layoutY="70.0" prefHeight="400.0" prefWidth="600.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
          <children>
-            <ToolBar prefHeight="40.0" prefWidth="200.0">
+            <ToolBar prefHeight="40.0" prefWidth="200.0" styleClass="filter-box">
                <items>
-                  <Button fx:id="favorites" graphicTextGap="10.0" mnemonicParsing="false" onAction="#submitFavorites" text="favorites">
-                     <graphic>
-                        <FontIcon iconColor="azure" iconLiteral="fas-star" iconSize="24" />
-                     </graphic>
-                  </Button>
                   <Pane HBox.hgrow="SOMETIMES" />
                   <TextField fx:id="searchField" promptText="type here anime title or its part" HBox.hgrow="SOMETIMES" />
                   <Pane HBox.hgrow="SOMETIMES" />
-                  <Button fx:id="ongoings" graphicTextGap="10.0" mnemonicParsing="false" onAction="#submitOngoings" text="ongoings">
+                  <Button graphicTextGap="10.0" mnemonicParsing="false" onAction="#submitFavorites" text="favorites">
                      <graphic>
-                        <FontIcon iconColor="azure" iconLiteral="fas-broadcast-tower" iconSize="24" />
-                     </graphic>
-                  </Button>
-                  <Button fx:id="topRated" graphicTextGap="10.0" mnemonicParsing="false" onAction="#submitTopRated" text="top rated">
-                     <graphic>
-                        <FontIcon iconColor="azure" iconLiteral="fas-gem" iconSize="24" />
+                        <FontIcon iconColor="azure" iconLiteral="fas-star" iconSize="24" />
                      </graphic>
                   </Button>
                </items>
@@ -36,25 +26,103 @@
             </ToolBar>
             <BorderPane fx:id="contentHolder" VBox.vgrow="SOMETIMES">
                <top>
-                  <TitledPane fx:id="genresPane" alignment="TOP_LEFT" contentDisplay="CENTER" expanded="false" text="genres" BorderPane.alignment="CENTER">
+                  <TitledPane fx:id="filtersPane" alignment="TOP_LEFT" contentDisplay="RIGHT" expanded="false" graphicTextGap="10.0" styleClass="filter-box" text="filters" BorderPane.alignment="CENTER">
+                     <graphic>
+                        <FontIcon iconColor="azure" iconLiteral="fas-filter" iconSize="24" />
+                     </graphic>
                     <content>
-                      <AnchorPane minHeight="0.0" minWidth="0.0">
+                        <VBox alignment="TOP_CENTER" spacing="15.0">
                            <children>
-                              <VBox alignment="TOP_CENTER" layoutX="11.199999809265137" layoutY="11.199999809265137" spacing="10.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+                              <HBox spacing="25.0" VBox.vgrow="SOMETIMES">
                                  <children>
-                                    <ScrollPane fitToHeight="true" fitToWidth="true" hbarPolicy="NEVER" styleClass="edge-to-edge" VBox.vgrow="SOMETIMES">
-                                       <content>
-                                          <TilePane fx:id="checkBoxPane" alignment="TOP_CENTER" hgap="15.0" tileAlignment="TOP_CENTER" vgap="5.0" />
-                                       </content>
-                                    </ScrollPane>
-                                    <Button fx:id="searchByGenres" graphicTextGap="10.0" mnemonicParsing="false" onAction="#submitSearch" text="search by genres">
-                                       <graphic>
-                                          <FontIcon iconColor="azure" iconLiteral="fas-search" iconSize="24" />
-                                       </graphic>
-                                    </Button>
+                                    <HBox alignment="CENTER" spacing="10.0" HBox.hgrow="SOMETIMES">
+                                       <children>
+                                          <Label text="type:" />
+                                          <ChoiceBox fx:id="typeChoice" HBox.hgrow="SOMETIMES" />
+                                       </children>
+                                    </HBox>
+                                    <HBox alignment="CENTER" layoutX="10.0" layoutY="10.0" spacing="10.0" HBox.hgrow="SOMETIMES">
+                                       <children>
+                                          <Label text="age rating:" />
+                                          <ChoiceBox fx:id="ageChoice" HBox.hgrow="SOMETIMES" />
+                                       </children>
+                                    </HBox>
+                                    <HBox alignment="CENTER" layoutX="10.0" layoutY="10.0" spacing="10.0" HBox.hgrow="SOMETIMES">
+                                       <children>
+                                          <Label text="status:" />
+                                          <ChoiceBox fx:id="statusChoice" HBox.hgrow="SOMETIMES" />
+                                       </children>
+                                    </HBox>
+                                    <HBox alignment="CENTER" spacing="10.0" HBox.hgrow="SOMETIMES">
+                                       <children>
+                                          <Label text="score:" />
+                                          <Spinner fx:id="scoreSpinner" prefWidth="150.0" />
+                                          <Button mnemonicParsing="false" onAction="#resetSpinner">
+                                             <graphic>
+                                                <FontIcon iconColor="azure" iconLiteral="fas-undo" iconSize="24" />
+                                             </graphic>
+                                          </Button>
+                                       </children>
+                                    </HBox>
                                  </children>
-                              </VBox>
-                           </children></AnchorPane>
+                              </HBox>
+                              <TabPane tabClosingPolicy="UNAVAILABLE" VBox.vgrow="SOMETIMES">
+                                 <tabs>
+                                    <Tab fx:id="genresTab" closable="false" text="genres">
+                                       <content>
+                                          <VBox alignment="TOP_CENTER" spacing="10.0">
+                                             <children>
+                                                <ScrollPane fitToWidth="true" hbarPolicy="NEVER" styleClass="edge-to-edge" VBox.vgrow="SOMETIMES">
+                                                   <content>
+                                                      <TilePane fx:id="genresPane" alignment="TOP_CENTER" hgap="15.0" tileAlignment="TOP_CENTER" vgap="5.0" />
+                                                   </content>
+                                                   <padding>
+                                                      <Insets bottom="10.0" top="10.0" />
+                                                   </padding>
+                                                </ScrollPane>
+                                                <Button graphicTextGap="10.0" mnemonicParsing="false" onAction="#submitSearch" text="apply filters">
+                                                   <graphic>
+                                                      <FontIcon iconColor="azure" iconLiteral="fas-search" iconSize="24" />
+                                                   </graphic>
+                                                </Button>
+                                             </children>
+                                          </VBox>
+                                       </content>
+                                    </Tab>
+                                    <Tab fx:id="topTab" closable="false" text="top rated">
+                                       <content>
+                                          <VBox alignment="TOP_CENTER">
+                                             <children>
+                                                <Button graphicTextGap="10.0" mnemonicParsing="false" onAction="#submitTopRated" text="apply filters">
+                                                   <graphic>
+                                                      <FontIcon iconColor="azure" iconLiteral="fas-gem" iconSize="24" />
+                                                   </graphic>
+                                                </Button>
+                                             </children>
+                                             <padding>
+                                                <Insets bottom="15.0" left="15.0" right="15.0" top="15.0" />
+                                             </padding></VBox>
+                                       </content>
+                                    </Tab>
+                                    <Tab fx:id="ongoingTab" closable="false" text="ongoings">
+                                       <content>
+                                          <VBox alignment="TOP_CENTER">
+                                             <children>
+                                                <Button graphicTextGap="10.0" mnemonicParsing="false" onAction="#submitOngoings" text="apply filters">
+                                                   <graphic>
+                                                      <FontIcon iconColor="azure" iconLiteral="fas-broadcast-tower" iconSize="24" />
+                                                   </graphic>
+                                                </Button>
+                                             </children>
+                                             <padding>
+                                                <Insets bottom="15.0" left="15.0" right="15.0" top="15.0" />
+                                             </padding></VBox>
+                                       </content>
+                                    </Tab>
+                                 </tabs>
+                              </TabPane>
+                           </children>
+                        </VBox>
                     </content>
                   </TitledPane>
                </top>

@@ -1,13 +1,13 @@
 package app.controllers;
 
-import static app.controllers.MainController.LIMIT;
 import app.exceptions.NotFoundException;
 import app.model.anime.Anime;
 import app.model.request.RequestType;
 import app.model.request.SearchRequest;
 import app.service.anime.AnimeService;
 import app.service.injector.ViewInjector;
-import app.util.DataTransferService;
+import app.util.DataTransfer;
+import app.util.ViewValueExtractor;
 import io.reactivex.rxjava3.core.ObservableSource;
 import io.reactivex.rxjava3.subjects.Subject;
 import javafx.application.Platform;
@@ -33,15 +33,18 @@ public class AnimeListController {
 
     private final AnimeService animeService;
     private final ViewInjector viewInjector;
-    private final DataTransferService dataService;
+    private final DataTransfer dataService;
     private final Subject<SearchRequest> reqPublisher;
 
+    private final ViewValueExtractor extractor;
 
-    public AnimeListController(AnimeService animeService, ViewInjector viewInjector, DataTransferService dataService, Subject<SearchRequest> reqPublisher) {
+
+    public AnimeListController(AnimeService animeService, ViewInjector viewInjector, DataTransfer dataService, Subject<SearchRequest> reqPublisher, ViewValueExtractor extractor) {
         this.animeService = animeService;
         this.viewInjector = viewInjector;
         this.dataService = dataService;
         this.reqPublisher = reqPublisher;
+        this.extractor = extractor;
     }
 
     public void initialize(){
@@ -72,16 +75,21 @@ public class AnimeListController {
             this.list.getChildren().clear();
 
         switch (req.type()) {
-            case SEARCH -> this.animeService.findByQuery(req.query(), req.page(), req.limit(), req.genres())
+            case SEARCH -> this.animeService.findByQuery(req.query(), req.page(), req.limit(),
+                            req.typeChoice(), req.ageChoice(), req.statusChoice(), req.minScore(),
+                            req.genres())
                     .switchIfEmpty(this.handleEmpty(req))
                     .doOnError(this::handleExceptions)
                     .subscribe(this::addToList);
 
-            case TOP -> this.animeService.findTop(req.page(), req.limit())
+            case TOP -> this.animeService.findTop(req.page(), req.limit(), req.typeChoice(),
+                            req.ageChoice(), req.statusChoice())
+                    .switchIfEmpty(this.handleEmpty(req))
                     .doOnError(this::handleExceptions)
                     .subscribe(this::addToList);
 
-            case NOW -> this.animeService.findOngoings(req.page(), req.limit())
+            case NOW -> this.animeService.findOngoings(req.page(), req.limit(), req.typeChoice())
+                    .switchIfEmpty(this.handleEmpty(req))
                     .doOnError(this::handleExceptions)
                     .subscribe(this::addToList);
 
@@ -110,7 +118,7 @@ public class AnimeListController {
 
         Platform.runLater(() -> {
             this.backBtn.setDisable(false);
-            this.title.setText(anime.titleEnglish() != null ? anime.titleEnglish() : anime.title());
+            this.title.setText(this.extractor.getTitle(anime));
             this.single.setVisible(true);
             this.singleScroll.setContent(node);
         });
@@ -151,13 +159,8 @@ public class AnimeListController {
         scroll.valueProperty().addListener((obs, ov, nv) -> {
 
             if ((double) nv == 1.0) {
-                var currPage = this.page.incrementAndGet();
-                var ids = this.dataService.getSelectedGenres();
-
-                var request = new SearchRequest(this.dataService.getRequestType(), 0,
-                        this.dataService.getSearchField().getText(), currPage, LIMIT, ids);
-
-                this.reqPublisher.onNext(request);
+                this.page.incrementAndGet();
+                this.reqPublisher.onNext(this.dataService.createRequest());
             }
         });
     }

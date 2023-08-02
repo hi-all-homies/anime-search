@@ -7,8 +7,9 @@ import app.service.anime.AnimeService;
 import app.service.anime.DefaultAnimeService;
 import app.service.injector.DefaultViewInjector;
 import app.service.injector.ViewInjector;
-import app.util.DataTransferService;
+import app.util.DataTransfer;
 import app.util.LikedStorage;
+import app.util.ViewValueExtractor;
 import io.reactivex.rxjava3.subjects.BehaviorSubject;
 import io.reactivex.rxjava3.subjects.Subject;
 import io.reactivex.rxjava3.subjects.UnicastSubject;
@@ -36,18 +37,20 @@ public class Container {
                 .connectTimeout(Duration.ofMillis(3500));
         AnimeService animeService = new DefaultAnimeService(builder);
 
-        var dataService = new DataTransferService();
+        var dataService = new DataTransfer();
 
         Subject<String> closeEmitter = BehaviorSubject.create();
 
+        var extractor = new ViewValueExtractor();
+
         viewInjector.addMethod(AnimeController.class,
-                () -> new AnimeController(viewInjector, reqPublisher, dataService));
+                () -> new AnimeController(viewInjector, reqPublisher, dataService, extractor));
 
         viewInjector.addMethod(AnimeListController.class,
-                () -> new AnimeListController(animeService, viewInjector, dataService, reqPublisher));
+                () -> new AnimeListController(animeService, viewInjector, dataService, reqPublisher, extractor));
 
         viewInjector.addMethod(SingleAnimeController.class,
-                ()->new SingleAnimeController(dataService,animeService,viewInjector,likedAnime,closeEmitter));
+                ()->new SingleAnimeController(dataService,animeService,viewInjector,likedAnime,closeEmitter, extractor));
 
         viewInjector.addMethod(CharacterImageController.class,
                 () -> new CharacterImageController(dataService));

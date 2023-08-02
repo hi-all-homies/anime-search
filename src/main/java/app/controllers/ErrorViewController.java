@@ -1,7 +1,7 @@
 package app.controllers;
 
 import app.exceptions.NotFoundException;
-import app.util.DataTransferService;
+import app.util.DataTransfer;
 import javafx.scene.control.Label;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
@@ -12,9 +12,9 @@ public class ErrorViewController {
     public Label title;
     public ImageView imageView;
 
-    private final DataTransferService dataService;
+    private final DataTransfer dataService;
 
-    public ErrorViewController(DataTransferService dataService) {
+    public ErrorViewController(DataTransfer dataService) {
         this.dataService = dataService;
     }
 

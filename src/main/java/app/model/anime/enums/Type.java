@@ -5,23 +5,29 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 
 public enum Type {
     @JsonProperty("TV")
-    TV,
+    TV("tv"),
 
     @JsonProperty("Movie")
-    MOVIE,
+    MOVIE("movie"),
 
     @JsonProperty("OVA")
-    OVA,
+    OVA("ova"),
 
     @JsonProperty("Special")
-    SPECIAL,
+    SPECIAL("special"),
 
     @JsonProperty("ONA")
-    ONA,
+    ONA("ona"),
 
     @JsonProperty("Music")
-    MUSIC,
+    MUSIC("music"),
 
     @JsonEnumDefaultValue
-    ALL
+    ALL("all");
+
+    public final String name;
+
+    Type(String name) {
+        this.name = name;
+    }
 }

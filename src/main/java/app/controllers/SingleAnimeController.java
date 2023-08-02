@@ -3,11 +3,11 @@ package app.controllers;
 
 import app.model.anime.Anime;
 import app.model.anime.GenreEntity;
-import app.model.anime.enums.Status;
 import app.model.personage.Personage;
 import app.service.anime.AnimeService;
 import app.service.injector.ViewInjector;
-import app.util.DataTransferService;
+import app.util.DataTransfer;
+import app.util.ViewValueExtractor;
 import io.reactivex.rxjava3.core.Observable;
 import io.reactivex.rxjava3.schedulers.Schedulers;
 import io.reactivex.rxjava3.subjects.Subject;
@@ -27,7 +27,6 @@ import org.kordamp.ikonli.javafx.FontIcon;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
-import java.util.regex.Pattern;
 import java.util.stream.Stream;
 
 
@@ -57,11 +56,13 @@ public class SingleAnimeController {
 
     private Anime anime;
 
-    private final DataTransferService dataService;
+    private final DataTransfer dataService;
 
     private final AnimeService animeService;
 
     private final ViewInjector viewInjector;
+
+    private final ViewValueExtractor extractor;
 
     private final List<Personage> characterList = new ArrayList<>();
 
@@ -70,10 +71,11 @@ public class SingleAnimeController {
     private final Map<Integer, Anime> likedAnime;
 
 
-    public SingleAnimeController(DataTransferService dataService, AnimeService animeService, ViewInjector viewInjector, Map<Integer, Anime> likedAnime, Subject<String> closeEmitter) {
+    public SingleAnimeController(DataTransfer dataService, AnimeService animeService, ViewInjector viewInjector, Map<Integer, Anime> likedAnime, Subject<String> closeEmitter, ViewValueExtractor extractor) {
         this.dataService = dataService;
         this.animeService = animeService;
         this.viewInjector = viewInjector;
+        this.extractor = extractor;
         this.closeEmitter = closeEmitter;
         this.likedAnime = likedAnime;
     }
@@ -92,23 +94,7 @@ public class SingleAnimeController {
             this.likeIcon.setIconLiteral("far-heart");
         }
         else {
-            var title = anime.titleEnglish() != null ?
-                    anime.titleEnglish() : anime.title();
-
-            int year = anime.year() != null ? anime.year() :
-                    anime.aired().prop().from().year() != null ?
-                            anime.aired().prop().from().year() : -1;
-
-            if (year == -1 && anime.aired().range() != null) {
-
-                Pattern pattern = Pattern.compile("(\\d{4})");
-                var matcher = pattern.matcher(anime.aired().range());
-
-                if (matcher.find())
-                    year = Integer.parseInt(matcher.group());
-            }
-
-            var liked = new Anime(this.anime, title, year);
+            var liked = new Anime(this.anime, this.extractor.getTitle(anime), this.extractor.getYear(anime));
             this.likedAnime.put(liked.id(), liked);
             this.like.setText(REMOVE_LIKE);
             this.likeIcon.setIconLiteral("fas-heart");
@@ -121,7 +107,7 @@ public class SingleAnimeController {
         var node = this.viewInjector.load("/views/trailer.fxml");
         var bounds = Screen.getPrimary().getBounds();
 
-        var scene = new Scene(node, bounds.getWidth()*40/100, bounds.getHeight()*30/100);
+        var scene = new Scene(node, bounds.getWidth()*50/100, bounds.getHeight()*50/100);
 
         var trailerStage = new Stage();
         trailerStage.setTitle(anime.title());
@@ -142,21 +128,20 @@ public class SingleAnimeController {
 
         this.img.setImage(new Image(anime.images().jpg().largeImageUrl()));
 
-        this.type.setText(String.format("Type: %s", anime.type() != null ? anime.type() : " - "));
+        this.type.setText(String.format("Type: %s", anime.type() != null ? anime.type().name : " - "));
         this.source.setText(String.format("Source: %s", anime.source() != null ? anime.source() : " - "));
         this.score.setText(String.format("Score: %.2f", anime.score()));
-        this.year.setText(String.format("Year: %s", anime.year() != null ? anime.year() : " - "));
 
-        this.rating.setText(String.format("Age rating: %s", anime.rating() == null ? " - " : anime.rating()));
+        this.year.setText(this.extractor.getYearString(this.anime));
+
+        this.rating.setText(this.extractor.getRating(this.anime));
 
         this.duration.setText(String.format("Duration: %s", anime.duration() != null ? anime.duration() : " - "));
-        this.episodes.setText(String.format("Episodes: %s", anime.episodes() != null ? anime.episodes() : " - "));
+        this.episodes.setText(this.extractor.getEpisodes(this.anime));
 
-        var animeStat = this.anime.status();
-        this.status.setText("Status: " + animeStat.name());
-        String style = String.format("-fx-text-fill: %s", animeStat.equals(Status.FINISHED) ?
-                "#ee4b2b" : animeStat.equals(Status.AIRING) ? "#50c878" : "#fccb06");
-        this.status.setStyle(style);
+
+        this.status.setText("Status: " + anime.status().name);
+        this.status.setStyle(this.extractor.getStatusStyle(this.anime));
 
         this.aired.setText(String.format("Aired from %s",
                 anime.aired().range() != null ? anime.aired().range() : "?"));
@@ -172,12 +157,9 @@ public class SingleAnimeController {
                 .reduce("Genres: ", (res, el) -> res + el + "; ");
         this.genres.setText(stringGenres);
 
-        var synopsis = this.anime.synopsis() != null ?
-                this.anime.synopsis().replaceAll("\n", "") : "none";
-
         var background = new Text(anime.background() != null ? anime.background() : "none");
 
-        this.synopsis.getChildren().add(new Text(synopsis));
+        this.synopsis.getChildren().add(new Text(this.extractor.getSynopsis(this.anime)));
         this.background.getChildren().add(background);
 
         boolean isLiked = this.likedAnime.containsKey(this.anime.id());

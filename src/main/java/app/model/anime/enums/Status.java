@@ -5,14 +5,27 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 
 public enum Status {
     @JsonProperty("Currently Airing")
-    AIRING,
+    AIRING("airing", "airing"),
 
     @JsonProperty("Not yet aired")
-    UPCOMING,
+    UPCOMING("upcoming", "upcoming"),
 
     @JsonProperty("Finished Airing")
-    FINISHED,
+    COMPLETE("complete", "complete"),
 
     @JsonEnumDefaultValue
-    UNKNOWN;
+    All("all", "all"),
+
+    BY_POPULARITY("bypopularity", "by popularity"),
+
+    FAVORITE("favorite", "favorite");
+
+    public final String name;
+
+    public final String description;
+
+    Status(String name, String description) {
+        this.name = name;
+        this.description = description;
+    }
 }

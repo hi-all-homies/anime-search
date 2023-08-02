@@ -1,6 +1,9 @@
 package app.service.anime;
 
 import app.model.anime.Anime;
+import app.model.anime.enums.AgeRating;
+import app.model.anime.enums.Status;
+import app.model.anime.enums.Type;
 import app.model.personage.Personage;
 import app.model.response.Response;
 import app.model.response.ResponseList;
@@ -42,10 +45,31 @@ public class DefaultAnimeService implements AnimeService{
     }
 
     @Override
-    public Observable<Anime> findByQuery(String query, int page, int limit, int... genres) {
+    public Observable<Anime> findByQuery(String query, int page, int limit, Type type,
+                                         AgeRating ageRating, Status status, String minScore,
+                                         int... genres) {
+
+        var path = this.buildSearchQuery(
+                query, page, limit, type, ageRating, status, minScore, genres);
+
+        return this.sendRequest(this.getRequest(path))
+                .map(in -> this.readInputStream(in, this.listedAnime))
+                .flatMap(resp -> Observable.fromIterable(resp.getListedData()));
+    }
+
+    private StringBuilder buildSearchQuery(String query, int page, int limit, Type type, AgeRating ageRating, Status status, String minScore, int[] genres) {
         var path = new StringBuilder(BASE_URL)
                 .append("anime?page=").append(page)
                 .append("&limit=").append(limit);
+
+        if (!type.equals(Type.ALL))
+            path.append("&type=").append(type.name);
+        if (!ageRating.equals(AgeRating.All))
+            path.append("&rating=").append(ageRating.name);
+        if (!status.equals(Status.All))
+            path.append("&status=").append(status.name);
+        if (!minScore.equals("all"))
+            path.append("&min_score=").append(minScore);
 
         if (!"".equals(query))
             path.append("&q=").append(URLEncoder.encode(query, StandardCharsets.UTF_8));
@@ -57,32 +81,51 @@ public class DefaultAnimeService implements AnimeService{
                     path.append(",");
             }
         }
+        return path;
+    }
+
+    @Override
+    public Observable<Anime> findTop(int page, int limit, Type type, AgeRating ageRating,
+                                     Status filter) {
+        
+        var path = this.buildTopQuery(page, limit, type, ageRating, filter);
 
         return this.sendRequest(this.getRequest(path))
                 .map(in -> this.readInputStream(in, this.listedAnime))
                 .flatMap(resp -> Observable.fromIterable(resp.getListedData()));
     }
 
-    @Override
-    public Observable<Anime> findTop(int page, int limit) {
+    private StringBuilder buildTopQuery(int page, int limit, Type type, AgeRating ageRating, Status filter) {
         var path = new StringBuilder(BASE_URL)
                 .append("top/anime?page=").append(page)
                 .append("&limit=").append(limit);
 
+        if (!type.equals(Type.ALL))
+            path.append("&type=").append(type.name);
+        if (!ageRating.equals(AgeRating.All))
+            path.append("&rating=").append(ageRating.name);
+        if (!filter.equals(Status.All))
+            path.append("&filter=").append(filter.name);
+        return path;
+    }
+
+    @Override
+    public Observable<Anime> findOngoings(int page, int limit, Type filter) {
+        var path = this.buildOngoingsQuery(page, limit, filter);
+
         return this.sendRequest(this.getRequest(path))
                 .map(in -> this.readInputStream(in, this.listedAnime))
                 .flatMap(resp -> Observable.fromIterable(resp.getListedData()));
     }
 
-    @Override
-    public Observable<Anime> findOngoings(int page, int limit) {
+    private StringBuilder buildOngoingsQuery(int page, int limit, Type filter) {
         var path = new StringBuilder(BASE_URL)
                 .append("seasons/now?page=").append(page)
                 .append("&limit=").append(limit);
 
-        return this.sendRequest(this.getRequest(path))
-                .map(in -> this.readInputStream(in, this.listedAnime))
-                .flatMap(resp -> Observable.fromIterable(resp.getListedData()));
+        if (!filter.equals(Type.ALL))
+            path.append("&filter=").append(filter.name);
+        return path;
     }
 
     @Override

@@ -2,6 +2,9 @@ package app.service;
 
 import static org.junit.jupiter.api.Assertions.*;
 
+import app.model.anime.enums.AgeRating;
+import app.model.anime.enums.Status;
+import app.model.anime.enums.Type;
 import app.service.anime.AnimeService;
 import app.service.anime.DefaultAnimeService;
 import org.junit.jupiter.api.BeforeAll;
@@ -32,7 +35,8 @@ class DefaultAnimeServiceTest {
     @Order(2)
     void findByQuery() throws InterruptedException {
         Thread.sleep(1000);
-        var disp = this.animeService.findByQuery("", 1, 10)
+        var disp = this.animeService.findByQuery("", 1, 10, Type.ALL,
+                        AgeRating.All, Status.All, "all")
                 .toList()
                 .subscribe(list -> assertEquals(10, list.size()));
         while (!disp.isDisposed()){}
@@ -41,7 +45,7 @@ class DefaultAnimeServiceTest {
     @Test
     @Order(3)
     void findTop()  {
-        var disp = this.animeService.findTop(1, 7)
+        var disp = this.animeService.findTop(1, 7, Type.ALL, AgeRating.All, Status.All)
                 .toList()
                 .subscribe(list -> assertEquals(7, list.size()));
         while (!disp.isDisposed()){}
@@ -51,7 +55,7 @@ class DefaultAnimeServiceTest {
     @Order(4)
     void findOngoings() throws InterruptedException {
         Thread.sleep(1000);
-        var disp = this.animeService.findOngoings( 1, 12)
+        var disp = this.animeService.findOngoings( 1, 12, Type.ALL)
                 .toList()
                 .subscribe(list -> assertEquals(12, list.size()));
         while (!disp.isDisposed()){}

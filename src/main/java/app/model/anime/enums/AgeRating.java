@@ -23,13 +23,13 @@ public enum AgeRating{
     RX("rx", "Rx - Hentai"),
 
     @JsonEnumDefaultValue
-    UNKNOWN("unknown", "unknown");
+    All("all", "all");
 
-    public final String type;
+    public final String name;
     public final String description;
 
-    AgeRating(String type, String description) {
-        this.type = type;
+    AgeRating(String name, String description) {
+        this.name = name;
         this.description = description;
     }
 }

@@ -5,7 +5,7 @@ import app.model.anime.enums.Genre;
 import app.model.anime.GenreEntity;
 import app.model.request.SearchRequest;
 import app.service.injector.ViewInjector;
-import app.util.DataTransferService;
+import app.util.DataTransfer;
 import io.reactivex.rxjava3.subjects.Subject;
 import javafx.animation.TranslateTransition;
 import javafx.beans.binding.Bindings;
@@ -45,11 +45,11 @@ public class FavoritesController {
     private DoubleBinding genresTotal;
 
     private final Subject<SearchRequest> reqPublisher;
-    private final DataTransferService dataService;
+    private final DataTransfer dataService;
     private final ViewInjector viewInjector;
 
 
-    public FavoritesController(Map<Integer, Anime> likedAnime, Subject<SearchRequest> reqPublisher, DataTransferService dataService, ViewInjector viewInjector) {
+    public FavoritesController(Map<Integer, Anime> likedAnime, Subject<SearchRequest> reqPublisher, DataTransfer dataService, ViewInjector viewInjector) {
         this.likedAnime = likedAnime;
         this.reqPublisher = reqPublisher;
         this.dataService = dataService;
@@ -235,7 +235,7 @@ public class FavoritesController {
             var title = new Text(item.title());
             var filler = new Pane();
             var year = new Label(item.year() != -1 ? String.valueOf(item.year()) : "unknown");
-            var type = new Label(item.type().name());
+            var type = new Label(item.type().name);
             HBox.setHgrow(filler, Priority.SOMETIMES);
             hBox.getChildren().addAll(title, filler, year, type);
             setGraphic(hBox);

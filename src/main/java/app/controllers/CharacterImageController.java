@@ -1,6 +1,6 @@
 package app.controllers;
 
-import app.util.DataTransferService;
+import app.util.DataTransfer;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.control.ContextMenu;
@@ -28,9 +28,9 @@ public class CharacterImageController {
 
     private ContextMenu menu;
 
-    private final DataTransferService dataService;
+    private final DataTransfer dataService;
 
-    public CharacterImageController(DataTransferService dataService) {
+    public CharacterImageController(DataTransfer dataService) {
         this.dataService = dataService;
     }
 

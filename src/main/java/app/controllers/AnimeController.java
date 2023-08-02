@@ -1,10 +1,10 @@
 package app.controllers;
 
 import app.model.anime.Anime;
-import app.model.anime.enums.Status;
 import app.model.request.SearchRequest;
 import app.service.injector.ViewInjector;
-import app.util.DataTransferService;
+import app.util.DataTransfer;
+import app.util.ViewValueExtractor;
 import io.reactivex.rxjava3.subjects.Subject;
 import javafx.scene.Scene;
 import javafx.scene.control.Label;
@@ -35,13 +35,16 @@ public class AnimeController {
 
     private final Subject<SearchRequest> publisher;
 
-    private final DataTransferService dataService;
+    private final DataTransfer dataService;
+
+    private final ViewValueExtractor extractor;
 
 
-    public AnimeController(ViewInjector viewInjector, Subject<SearchRequest> publisher, DataTransferService dataService) {
+    public AnimeController(ViewInjector viewInjector, Subject<SearchRequest> publisher, DataTransfer dataService, ViewValueExtractor extractor) {
         this.viewInjector = viewInjector;
         this.dataService = dataService;
         this.publisher = publisher;
+        this.extractor = extractor;
     }
 
     public  void initialize(){
@@ -68,28 +71,20 @@ public class AnimeController {
 
     private void setFields(){
         this.img.setImage(new Image(this.anime.images().jpg().imageUrl()));
+        this.title.setText(this.extractor.getTitle(this.anime));
 
-        var titleEng = anime.titleEnglish();
-        if (titleEng == null || "".equals(titleEng))
-            this.title.setText(anime.title());
-        else this.title.setText(titleEng);
+        this.status.setText("Status: " + anime.status().name);
+        this.status.setStyle(this.extractor.getStatusStyle(this.anime));
 
-        var animeStat = this.anime.status();
-        this.status.setText("Status: " + animeStat.name());
-        String style = String.format("-fx-text-fill: %s", animeStat.equals(Status.FINISHED) ?
-                "#ee4b2b" : animeStat.equals(Status.AIRING) ? "#50c878" : "#fccb06");
-        this.status.setStyle(style);
+        this.episodes.setText(this.extractor.getEpisodes(this.anime));
 
-        this.episodes.setText(String.format("Episodes: %d", anime.episodes() != null ? anime.episodes() : 0));
-
-        this.rating.setText(String.format("Age rating: %s", anime.rating() == null ? " - " : anime.rating()));
+        this.rating.setText(this.extractor.getRating(this.anime));
 
         this.score.setText(String.format("Score: %.2f", anime.score()));
 
-        this.year.setText(String.format("Year : %s", anime.year() != null ? anime.year() : " - "));
+        this.year.setText(this.extractor.getYearString(this.anime));
 
-        var synopsis = this.anime.synopsis() != null ?
-                this.anime.synopsis().replaceAll("\n", "") : "none";
+        var synopsis = this.extractor.getSynopsis(this.anime);
 
         this.textFlow.getChildren().add(
                 new Text(synopsis.length() > 350 ? synopsis.substring(0, 347) + "..." : synopsis));
