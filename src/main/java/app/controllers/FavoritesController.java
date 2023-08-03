@@ -1,5 +1,6 @@
 package app.controllers;
 
+import app.model.DialogData;
 import app.model.anime.Anime;
 import app.model.anime.enums.Genre;
 import app.model.anime.GenreEntity;
@@ -29,7 +30,6 @@ import javafx.stage.Stage;
 import javafx.stage.StageStyle;
 import javafx.util.Duration;
 import java.util.*;
-import java.util.function.Consumer;
 
 public class FavoritesController {
 
@@ -150,35 +150,67 @@ public class FavoritesController {
                 genresPie.getData());
 
         this.genresPie.getData()
-                .forEach(addClickHandlers);
+                .forEach(this::addClickHandlers);
     }
 
-    private final Consumer<PieChart.Data> addClickHandlers = data -> {
+    private void addClickHandlers (PieChart.Data data){
         var dataNode = data.getNode();
 
         dataNode.addEventHandler(MouseEvent.MOUSE_CLICKED, event -> {
 
-            if (event.getButton() == MouseButton.PRIMARY) {
+            if ((!event.isControlDown()) && event.getButton() == MouseButton.PRIMARY) {
                 String percentVal = data.getName() + " - " +
                         String.format("%.1f", 100 * data.getPieValue() / genresTotal.get()) + "%";
                 this.percents.setText(percentVal);
+
+                var bounds = dataNode.getBoundsInLocal();
+
+                double newX = bounds.getWidth() / 2 + bounds.getMinX();
+                double newY = bounds.getHeight() / 2 + bounds.getMinY();
+
+                dataNode.setTranslateX(0);
+                dataNode.setTranslateY(0);
+
+                var transition = new TranslateTransition(Duration.seconds(1d), dataNode);
+                transition.setByX(newX);
+                transition.setByY(newY);
+                transition.setAutoReverse(true);
+                transition.setCycleCount(2);
+                transition.play();
             }
-            var bounds = dataNode.getBoundsInLocal();
 
-            double newX = bounds.getWidth() / 2 + bounds.getMinX();
-            double newY = bounds.getHeight() / 2 + bounds.getMinY();
+            else if (event.isControlDown() && event.getButton() == MouseButton.PRIMARY) {
+                var genreName = data.getName();
+                int year = this.yearChoice.getValue().equals("unknown") ? -1 :
+                        Integer.parseInt(this.yearChoice.getValue());
 
-            dataNode.setTranslateX(0);
-            dataNode.setTranslateY(0);
+                var filtered = this.likedAnime.values()
+                        .stream()
+                        .filter(anime -> anime.year().equals(year))
+                        .filter(anime -> {
+                            if (this.slider.getValue() == 0)
+                                return this.findMatch(anime.genres(), genreName);
+                            else
+                                return this.findMatch(anime.themes(), genreName);
+                        })
+                        .toList();
 
-            var transition = new TranslateTransition(Duration.seconds(1d), dataNode);
-            transition.setByX(newX);
-            transition.setByY(newY);
-            transition.setAutoReverse(true);
-            transition.setCycleCount(2);
-            transition.play();
+                this.dataService.setDialogData(new DialogData(genreName, year, filtered));
+
+                var dialogPane = (DialogPane) this.viewInjector.load("/views/anime-by-year-and-genre.fxml");
+                var dialog = new Dialog<>();
+                dialog.setDialogPane(dialogPane);
+                dialog.show();
+            }
         });
-    };
+        var toolTip = new Tooltip("Ctrl+click to see which anime included");
+        Tooltip.install(dataNode, toolTip);
+    }
+
+    private boolean findMatch(Collection<GenreEntity> genres, String namePattern){
+        return genres.stream().map(GenreEntity::name)
+                .anyMatch(name -> name.equals(namePattern));
+    }
 
     private void fillStatsMap(final Map<String, Integer> stats, Collection<GenreEntity> genres){
         genres.forEach(genre -> {

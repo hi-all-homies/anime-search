@@ -1,5 +1,6 @@
 package app.util;
 
+import app.model.DialogData;
 import app.model.anime.Anime;
 import app.model.anime.enums.AgeRating;
 import app.model.anime.enums.Status;
@@ -32,6 +33,8 @@ public class DataTransfer {
     private Personage personage;
 
     private Throwable error;
+
+    private DialogData dialogData;
 
     public Anime getAnime() {
         return anime;
@@ -122,5 +125,13 @@ public class DataTransfer {
         return new SearchRequest(
                 this.requestType, 0, this.searchField.getText(),
                 this.page.get(), LIMIT, ids, type, age, status, minScore);
+    }
+
+    public DialogData getDialogData() {
+        return dialogData;
+    }
+
+    public void setDialogData(DialogData dialogData) {
+        this.dialogData = dialogData;
     }
 }

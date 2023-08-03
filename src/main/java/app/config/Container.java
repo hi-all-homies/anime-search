@@ -67,6 +67,8 @@ public class Container {
         viewInjector.addMethod(TrailerController.class,
                 () -> new TrailerController(dataService, closeEmitter));
 
+        viewInjector.addMethod(DialogController.class, () -> new DialogController(dataService));
+
         return this;
     }
 
