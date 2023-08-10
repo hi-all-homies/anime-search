@@ -14,12 +14,10 @@
          <top>
             <HBox alignment="CENTER" spacing="15.0">
                <children>
-                  <Pane HBox.hgrow="SOMETIMES" />
-                  <Label fx:id="title" styleClass="titles" />
-                  <Pane HBox.hgrow="SOMETIMES" />
-                  <Button fx:id="backBtn" mnemonicParsing="false" onAction="#submitBack">
+                  <TextField fx:id="title" alignment="CENTER" editable="false" styleClass="copyable-title" HBox.hgrow="SOMETIMES" />
+                  <Button fx:id="backBtn" graphicTextGap="10.0" mnemonicParsing="false" onAction="#submitBack" text="back">
                      <graphic>
-                        <FontIcon iconColor="azure" iconLiteral="fas-fast-backward" iconSize="25" />
+                        <FontIcon iconColor="azure" iconLiteral="fas-chevron-left" iconSize="25" />
                      </graphic>
                   </Button>
                </children>

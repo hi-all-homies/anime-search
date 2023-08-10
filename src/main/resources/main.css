@@ -53,3 +53,8 @@ Text {
 .filter-box{
     -fx-font-size: 12.5pt;
 }
+.copyable-title, .copyable-title:focused {
+    -fx-background-color: transparent ;
+    -fx-background-insets: 0px ;
+    -fx-font-weight: bold;
+}

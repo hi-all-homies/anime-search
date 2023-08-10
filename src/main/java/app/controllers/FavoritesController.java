@@ -199,7 +199,10 @@ public class FavoritesController {
 
                 var dialogPane = (DialogPane) this.viewInjector.load("/views/anime-by-year-and-genre.fxml");
                 var dialog = new Dialog<>();
+                dialog.setTitle("Statistics");
                 dialog.setDialogPane(dialogPane);
+                var dialogStage = (Stage) dialog.getDialogPane().getScene().getWindow();
+                dialogStage.getIcons().add(new Image("/assets/icon.png"));
                 dialog.show();
             }
         });

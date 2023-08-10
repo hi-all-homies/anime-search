@@ -194,7 +194,15 @@ public class MainController {
         this.scoreSpinner.getStyleClass().add(Spinner.STYLE_CLASS_SPLIT_ARROWS_HORIZONTAL);
     }
 
-    public void resetSpinner() {
+    public void resetFields() {
+        this.genresPane.getChildren()
+                .forEach(node -> ((CheckBox) node).setSelected(false));
+
+        this.genreChoices.clear();
+
+        this.typeChoice.setValue(Type.ALL);
+        this.statusChoice.setValue(Status.All);
+        this.ageChoice.setValue(AgeRating.All);
         this.scoreSpinner.getValueFactory().setValue("all");
     }
 

@@ -5,11 +5,11 @@
 <?import javafx.scene.layout.*?>
 <?import org.kordamp.ikonli.javafx.*?>
 
-<AnchorPane prefHeight="400.0" prefWidth="600.0" stylesheets="@../main.css" xmlns="http://javafx.com/javafx/11.0.14-internal" xmlns:fx="http://javafx.com/fxml/1" fx:controller="app.controllers.MainController">
+<AnchorPane stylesheets="@../main.css" xmlns="http://javafx.com/javafx/11.0.14-internal" xmlns:fx="http://javafx.com/fxml/1" fx:controller="app.controllers.MainController">
    <children>
-      <VBox layoutX="230.0" layoutY="70.0" prefHeight="400.0" prefWidth="600.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+      <VBox layoutX="230.0" layoutY="70.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
          <children>
-            <ToolBar prefHeight="40.0" prefWidth="200.0" styleClass="filter-box">
+            <ToolBar styleClass="filter-box" VBox.vgrow="SOMETIMES">
                <items>
                   <Pane HBox.hgrow="SOMETIMES" />
                   <TextField fx:id="searchField" promptText="type here anime title or its part" HBox.hgrow="SOMETIMES" />
@@ -57,7 +57,7 @@
                                        <children>
                                           <Label text="score:" />
                                           <Spinner fx:id="scoreSpinner" prefWidth="150.0" />
-                                          <Button mnemonicParsing="false" onAction="#resetSpinner">
+                                          <Button contentDisplay="RIGHT" graphicTextGap="10.0" mnemonicParsing="false" onAction="#resetFields" text="reset">
                                              <graphic>
                                                 <FontIcon iconColor="azure" iconLiteral="fas-undo" iconSize="24" />
                                              </graphic>
@@ -70,23 +70,23 @@
                                  <tabs>
                                     <Tab fx:id="genresTab" closable="false" text="genres">
                                        <content>
-                                          <VBox alignment="TOP_CENTER" spacing="10.0">
-                                             <children>
-                                                <ScrollPane fitToWidth="true" hbarPolicy="NEVER" styleClass="edge-to-edge" VBox.vgrow="SOMETIMES">
-                                                   <content>
-                                                      <TilePane fx:id="genresPane" alignment="TOP_CENTER" hgap="15.0" tileAlignment="TOP_CENTER" vgap="5.0" />
-                                                   </content>
+                                          <ScrollPane fitToWidth="true" hbarPolicy="NEVER" styleClass="edge-to-edge">
+                                             <content>
+                                                <VBox alignment="TOP_CENTER" spacing="10.0">
+                                                   <children>
+                                                      <TilePane fx:id="genresPane" alignment="TOP_CENTER" hgap="15.0" tileAlignment="TOP_CENTER" vgap="5.0" VBox.vgrow="SOMETIMES" />
+                                                      <Button graphicTextGap="10.0" mnemonicParsing="false" onAction="#submitSearch" text="apply filters">
+                                                         <graphic>
+                                                            <FontIcon iconColor="azure" iconLiteral="fas-search" iconSize="24" />
+                                                         </graphic>
+                                                      </Button>
+                                                   </children>
                                                    <padding>
-                                                      <Insets bottom="10.0" top="10.0" />
+                                                      <Insets bottom="5.0" left="5.0" right="5.0" top="5.0" />
                                                    </padding>
-                                                </ScrollPane>
-                                                <Button graphicTextGap="10.0" mnemonicParsing="false" onAction="#submitSearch" text="apply filters">
-                                                   <graphic>
-                                                      <FontIcon iconColor="azure" iconLiteral="fas-search" iconSize="24" />
-                                                   </graphic>
-                                                </Button>
-                                             </children>
-                                          </VBox>
+                                                </VBox>
+                                             </content>
+                                          </ScrollPane>
                                        </content>
                                     </Tab>
                                     <Tab fx:id="topTab" closable="false" text="top rated">

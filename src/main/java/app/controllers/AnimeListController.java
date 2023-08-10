@@ -28,7 +28,7 @@ public class AnimeListController {
     private final AtomicInteger page = new AtomicInteger(1);
     public ScrollPane singleScroll;
 
-    public Label title;
+    public TextField title;
     public Button backBtn;
 
     private final AnimeService animeService;
