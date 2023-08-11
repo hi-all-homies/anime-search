@@ -19,6 +19,7 @@ import javafx.scene.control.*;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.HBox;
+import javafx.scene.layout.VBox;
 import javafx.scene.text.Text;
 import javafx.scene.text.TextFlow;
 import javafx.stage.Screen;
@@ -48,6 +49,9 @@ public class SingleAnimeController {
     public TextFlow synopsis;
     public TextFlow background;
     public Button like;
+    public VBox songs;
+    public VBox openings;
+    public VBox endings;
 
     public static final String ADD_LIKE = "like";
     public static final String REMOVE_LIKE = "dislike";
@@ -83,6 +87,7 @@ public class SingleAnimeController {
     public void initialize(){
         this.setFields();
         this.setCharacters();
+        this.setSongs();
     }
 
 
@@ -167,6 +172,35 @@ public class SingleAnimeController {
         this.likeIcon.setIconLiteral(isLiked ? "fas-heart" : "far-heart");
 
         this.trailer.setVisible(this.anime.trailer().embedUrl() != null);
+    }
+
+    private void setSongs(){
+        this.animeService.findSongs(this.anime.id())
+                .subscribe(animeSongs -> {
+                    if (animeSongs.openings().size() > 0){
+                        final var openings = this.createSongs(animeSongs.openings());
+                        final var endings =this.createSongs(animeSongs.endings());
+
+                        Platform.runLater(() -> {
+                            this.openings.getChildren().add(new Label("Openings:"));
+                            this.openings.getChildren().addAll(openings);
+                            this.endings.getChildren().add(new Label("Endings:"));
+                            this.endings.getChildren().addAll(endings);
+                        });
+                    }
+                    else this.songs.setVisible(false);
+                });
+    }
+
+    private List<TextField> createSongs(List<String> songs){
+        return songs.stream()
+                .map(value -> {
+                    var songField = new TextField(value);
+                    songField.setEditable(false);
+                    songField.getStyleClass().add("copyable-title");
+                    return songField;
+                })
+                .toList();
     }
 
 

@@ -73,4 +73,34 @@ class DefaultAnimeServiceTest {
                 });
         while (!disp.isDisposed()){}
     }
+
+    @Test
+    void findSongs() {
+        var disp = this.animeService.findSongs(1)
+                .doOnError(err -> {
+                    throw new RuntimeException(err.getMessage());
+                })
+                .subscribe(songs -> {
+                    assertNotNull(songs.openings());
+                    assertNotNull(songs.endings());
+                    assertTrue(songs.openings().size() > 0);
+                });
+        while (!disp.isDisposed()){}
+    }
+
+    @Test
+    void findRelations(){
+        var disp = this.animeService.findRelations(1)
+                .doOnError(err -> {
+                    throw new RuntimeException(err.getMessage());
+                })
+                .toList()
+                .subscribe(relations -> {
+                    assertTrue(relations.size() > 0);
+                    var firstRel = relations.get(0);
+                    assertNotNull(firstRel.entry());
+                    assertFalse(firstRel.relation().isEmpty());
+                });
+        while (!disp.isDisposed()){}
+    }
 }

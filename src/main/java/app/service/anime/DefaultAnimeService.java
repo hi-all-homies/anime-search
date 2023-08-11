@@ -4,7 +4,9 @@ import app.model.anime.Anime;
 import app.model.anime.enums.AgeRating;
 import app.model.anime.enums.Status;
 import app.model.anime.enums.Type;
+import app.model.anime.song.Songs;
 import app.model.personage.Personage;
+import app.model.relations.Relation;
 import app.model.response.Response;
 import app.model.response.ResponseList;
 import app.model.response.ResponseSingle;
@@ -139,6 +141,28 @@ public class DefaultAnimeService implements AnimeService{
                 .flatMap(resp -> Observable.fromIterable(resp.getListedData()));
     }
 
+    @Override
+    public Observable<Songs> findSongs(int animeId){
+        var path = new StringBuilder(BASE_URL)
+                .append("anime/").append(animeId)
+                .append("/").append("themes");
+
+        return this.sendRequest(this.getRequest(path))
+                .map(in -> this.readInputStream(in, this.songs))
+                .map(Response::getSingleData);
+    }
+
+    @Override
+    public Observable<Relation> findRelations(int animeId){
+        var path = new StringBuilder(BASE_URL)
+                .append("anime/").append(animeId)
+                .append("/").append("relations");
+
+        return this.sendRequest(this.getRequest(path))
+                .map(in -> this.readInputStream(in, this.relationList))
+                .flatMap(resp -> Observable.fromIterable(resp.getListedData()));
+    }
+
 
     private HttpRequest getRequest(StringBuilder path){
         return HttpRequest.newBuilder(URI.create(path.toString()))
@@ -156,6 +180,8 @@ public class DefaultAnimeService implements AnimeService{
     private final TypeReference<ResponseSingle<Anime>> singleAnime = new TypeReference<>(){};
     private final TypeReference<ResponseList<Anime>> listedAnime = new TypeReference<>(){};
     private final TypeReference<ResponseList<Personage>> listedCharacter = new TypeReference<>(){};
+    private final TypeReference<ResponseSingle<Songs>> songs = new TypeReference<>() {};
+    private final TypeReference<ResponseList<Relation>> relationList = new TypeReference<>() {};
 
     private <T> Response<T> readInputStream (
             InputStream in, TypeReference<? extends Response<T>> ref) throws IOException {
