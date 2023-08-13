@@ -121,6 +121,8 @@ public class AnimeListController {
             this.title.setText(this.extractor.getTitle(anime));
             this.single.setVisible(true);
             this.singleScroll.setContent(node);
+            var scroll = (ScrollBar) this.singleScroll.lookup(".scroll-bar:vertical");
+            scroll.setValue(0d);
         });
     }
 

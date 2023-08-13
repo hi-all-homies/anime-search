@@ -58,3 +58,10 @@ Text {
     -fx-background-insets: 0px ;
     -fx-font-weight: bold;
 }
+.copyable-field, .copyable-field:focused {
+    -fx-background-color: transparent;
+    -fx-background-insets: 0px;
+}
+.related-name:hover {
+    -fx-text-fill: royalblue;
+}

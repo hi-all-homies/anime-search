@@ -4,9 +4,7 @@ import app.model.anime.Anime;
 import app.model.anime.enums.AgeRating;
 import app.model.anime.enums.Status;
 import app.model.anime.enums.Type;
-import app.model.anime.song.Songs;
 import app.model.personage.Personage;
-import app.model.relations.Relation;
 import app.model.response.Response;
 import app.model.response.ResponseList;
 import app.model.response.ResponseSingle;
@@ -39,7 +37,7 @@ public class DefaultAnimeService implements AnimeService{
     @Override
     public Observable<Anime> findById(int id) {
         var path = new StringBuilder(BASE_URL)
-                .append("anime/").append(id);
+                .append("anime/").append(id).append("/full");
 
         return this.sendRequest(this.getRequest(path))
                 .map(in -> this.readInputStream(in, this.singleAnime))
@@ -56,7 +54,7 @@ public class DefaultAnimeService implements AnimeService{
 
         return this.sendRequest(this.getRequest(path))
                 .map(in -> this.readInputStream(in, this.listedAnime))
-                .flatMap(resp -> Observable.fromIterable(resp.getListedData()));
+                .flatMapIterable(Response::getListedData);
     }
 
     private StringBuilder buildSearchQuery(String query, int page, int limit, Type type, AgeRating ageRating, Status status, String minScore, int[] genres) {
@@ -94,7 +92,7 @@ public class DefaultAnimeService implements AnimeService{
 
         return this.sendRequest(this.getRequest(path))
                 .map(in -> this.readInputStream(in, this.listedAnime))
-                .flatMap(resp -> Observable.fromIterable(resp.getListedData()));
+                .flatMapIterable(Response::getListedData);
     }
 
     private StringBuilder buildTopQuery(int page, int limit, Type type, AgeRating ageRating, Status filter) {
@@ -117,7 +115,7 @@ public class DefaultAnimeService implements AnimeService{
 
         return this.sendRequest(this.getRequest(path))
                 .map(in -> this.readInputStream(in, this.listedAnime))
-                .flatMap(resp -> Observable.fromIterable(resp.getListedData()));
+                .flatMapIterable(Response::getListedData);
     }
 
     private StringBuilder buildOngoingsQuery(int page, int limit, Type filter) {
@@ -138,29 +136,7 @@ public class DefaultAnimeService implements AnimeService{
 
         return this.sendRequest(this.getRequest(path))
                 .map(in -> this.readInputStream(in, this.listedCharacter))
-                .flatMap(resp -> Observable.fromIterable(resp.getListedData()));
-    }
-
-    @Override
-    public Observable<Songs> findSongs(int animeId){
-        var path = new StringBuilder(BASE_URL)
-                .append("anime/").append(animeId)
-                .append("/").append("themes");
-
-        return this.sendRequest(this.getRequest(path))
-                .map(in -> this.readInputStream(in, this.songs))
-                .map(Response::getSingleData);
-    }
-
-    @Override
-    public Observable<Relation> findRelations(int animeId){
-        var path = new StringBuilder(BASE_URL)
-                .append("anime/").append(animeId)
-                .append("/").append("relations");
-
-        return this.sendRequest(this.getRequest(path))
-                .map(in -> this.readInputStream(in, this.relationList))
-                .flatMap(resp -> Observable.fromIterable(resp.getListedData()));
+                .flatMapIterable(Response::getListedData);
     }
 
 
@@ -173,15 +149,14 @@ public class DefaultAnimeService implements AnimeService{
         return Observable
                 .fromCallable(() ->
                         this.httpClient.send(
-                                req, HttpResponse.BodyHandlers.ofInputStream()).body())
+                                req, HttpResponse.BodyHandlers.ofInputStream()))
+                .map(HttpResponse::body)
                 .subscribeOn(Schedulers.io());
     }
 
     private final TypeReference<ResponseSingle<Anime>> singleAnime = new TypeReference<>(){};
     private final TypeReference<ResponseList<Anime>> listedAnime = new TypeReference<>(){};
     private final TypeReference<ResponseList<Personage>> listedCharacter = new TypeReference<>(){};
-    private final TypeReference<ResponseSingle<Songs>> songs = new TypeReference<>() {};
-    private final TypeReference<ResponseList<Relation>> relationList = new TypeReference<>() {};
 
     private <T> Response<T> readInputStream (
             InputStream in, TypeReference<? extends Response<T>> ref) throws IOException {

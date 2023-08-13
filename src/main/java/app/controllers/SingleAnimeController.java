@@ -4,6 +4,7 @@ package app.controllers;
 import app.model.anime.Anime;
 import app.model.anime.GenreEntity;
 import app.model.personage.Personage;
+import app.model.request.SearchRequest;
 import app.service.anime.AnimeService;
 import app.service.injector.ViewInjector;
 import app.util.DataTransfer;
@@ -12,13 +13,18 @@ import io.reactivex.rxjava3.core.Observable;
 import io.reactivex.rxjava3.schedulers.Schedulers;
 import io.reactivex.rxjava3.subjects.Subject;
 import javafx.application.Platform;
+import javafx.geometry.Insets;
 import javafx.geometry.Pos;
+import javafx.scene.Cursor;
 import javafx.scene.Node;
 import javafx.scene.Scene;
 import javafx.scene.control.*;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
+import javafx.scene.input.MouseButton;
+import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.HBox;
+import javafx.scene.layout.TilePane;
 import javafx.scene.layout.VBox;
 import javafx.scene.text.Text;
 import javafx.scene.text.TextFlow;
@@ -49,9 +55,9 @@ public class SingleAnimeController {
     public TextFlow synopsis;
     public TextFlow background;
     public Button like;
-    public VBox songs;
     public VBox openings;
     public VBox endings;
+    public TilePane relations;
 
     public static final String ADD_LIKE = "like";
     public static final String REMOVE_LIKE = "dislike";
@@ -74,20 +80,22 @@ public class SingleAnimeController {
 
     private final Map<Integer, Anime> likedAnime;
 
+    private final Subject<SearchRequest> reqPublisher;
 
-    public SingleAnimeController(DataTransfer dataService, AnimeService animeService, ViewInjector viewInjector, Map<Integer, Anime> likedAnime, Subject<String> closeEmitter, ViewValueExtractor extractor) {
+
+    public SingleAnimeController(DataTransfer dataService, AnimeService animeService, ViewInjector viewInjector, Map<Integer, Anime> likedAnime, Subject<String> closeEmitter, ViewValueExtractor extractor, Subject<SearchRequest> reqPublisher) {
         this.dataService = dataService;
         this.animeService = animeService;
         this.viewInjector = viewInjector;
         this.extractor = extractor;
         this.closeEmitter = closeEmitter;
         this.likedAnime = likedAnime;
+        this.reqPublisher = reqPublisher;
     }
 
     public void initialize(){
         this.setFields();
         this.setCharacters();
-        this.setSongs();
     }
 
 
@@ -172,24 +180,41 @@ public class SingleAnimeController {
         this.likeIcon.setIconLiteral(isLiked ? "fas-heart" : "far-heart");
 
         this.trailer.setVisible(this.anime.trailer().embedUrl() != null);
-    }
 
-    private void setSongs(){
-        this.animeService.findSongs(this.anime.id())
-                .subscribe(animeSongs -> {
-                    if (animeSongs.openings().size() > 0){
-                        final var openings = this.createSongs(animeSongs.openings());
-                        final var endings =this.createSongs(animeSongs.endings());
+        var ops = this.openings.getChildren();
+        ops.add(new Label("Openings:"));
+        var ends = this.endings.getChildren();
+        ends.add(new Label("Endings:"));
 
-                        Platform.runLater(() -> {
-                            this.openings.getChildren().add(new Label("Openings:"));
-                            this.openings.getChildren().addAll(openings);
-                            this.endings.getChildren().add(new Label("Endings:"));
-                            this.endings.getChildren().addAll(endings);
+        ops.addAll(this.createSongs(this.anime.theme().openings()));
+        ends.addAll(this.createSongs(this.anime.theme().endings()));
+
+
+        anime.relations().stream()
+                .flatMap(relation -> relation.entry().stream())
+                .map(entry -> {
+                    var entryBox = new VBox();
+                    entryBox.setSpacing(10);
+                    entryBox.setAlignment(Pos.TOP_CENTER);
+                    entryBox.setPadding(new Insets(5d));
+                    entryBox.getStyleClass().add("background-list");
+
+                    var name = new Label(entry.name());
+                    name.getStyleClass().add("related-name");
+                    var type = new Label("type: " + entry.type());
+
+                    if (entry.type().equals("anime")){
+                        name.setCursor(Cursor.HAND);
+                        name.addEventHandler(MouseEvent.MOUSE_CLICKED, event -> {
+                            if (event.getButton() == MouseButton.PRIMARY)
+                                this.reqPublisher.onNext(new SearchRequest(entry.id()));
                         });
                     }
-                    else this.songs.setVisible(false);
-                });
+
+                    entryBox.getChildren().addAll(type, name);
+                    return entryBox;
+                })
+                .forEach(this.relations.getChildren()::add);
     }
 
     private List<TextField> createSongs(List<String> songs){
@@ -197,7 +222,7 @@ public class SingleAnimeController {
                 .map(value -> {
                     var songField = new TextField(value);
                     songField.setEditable(false);
-                    songField.getStyleClass().add("copyable-title");
+                    songField.getStyleClass().add("copyable-field");
                     return songField;
                 })
                 .toList();

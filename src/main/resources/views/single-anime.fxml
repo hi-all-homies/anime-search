@@ -60,16 +60,15 @@
       <Label text="Background" />
       <TextFlow fx:id="background" lineSpacing="5.0" prefWidth="200.0" VBox.vgrow="SOMETIMES" />
       <Separator />
-      <VBox fx:id="songs" alignment="TOP_CENTER" spacing="10.0" VBox.vgrow="SOMETIMES">
+      <HBox alignment="TOP_CENTER" spacing="10.0" VBox.vgrow="SOMETIMES">
          <children>
-            <HBox alignment="TOP_CENTER" spacing="10.0" VBox.vgrow="SOMETIMES">
-               <children>
-                  <VBox fx:id="openings" HBox.hgrow="SOMETIMES" />
-                  <VBox fx:id="endings" HBox.hgrow="SOMETIMES" />
-               </children></HBox>
-            <Separator />
+            <VBox fx:id="openings" HBox.hgrow="SOMETIMES" />
+            <VBox fx:id="endings" HBox.hgrow="SOMETIMES" />
          </children>
-      </VBox>
+      </HBox>
+      <Separator />
+      <Label text="Related works" />
+      <TilePane fx:id="relations" alignment="TOP_CENTER" hgap="10.0" vgap="10.0" VBox.vgrow="SOMETIMES" />
    </children>
    <padding>
       <Insets bottom="10.0" left="10.0" right="10.0" top="10.0" />

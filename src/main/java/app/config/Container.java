@@ -50,7 +50,7 @@ public class Container {
                 () -> new AnimeListController(animeService, viewInjector, dataService, reqPublisher, extractor));
 
         viewInjector.addMethod(SingleAnimeController.class,
-                ()->new SingleAnimeController(dataService,animeService,viewInjector,likedAnime,closeEmitter, extractor));
+                ()->new SingleAnimeController(dataService,animeService,viewInjector,likedAnime,closeEmitter, extractor, reqPublisher));
 
         viewInjector.addMethod(CharacterImageController.class,
                 () -> new CharacterImageController(dataService));
