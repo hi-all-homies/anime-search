@@ -7,7 +7,7 @@
 <?import javafx.scene.layout.*?>
 <?import javafx.scene.text.*?>
 
-<HBox stylesheets="@../main.css" spacing="15.0" styleClass="background-list" xmlns="http://javafx.com/javafx/11.0.14-internal" xmlns:fx="http://javafx.com/fxml/1" fx:controller="app.controllers.AnimeController">
+<HBox spacing="15.0" styleClass="background-list" xmlns="http://javafx.com/javafx/11.0.14-internal" xmlns:fx="http://javafx.com/fxml/1" fx:controller="app.controllers.AnimeController">
    <children>
       <VBox spacing="10.0">
          <children>

@@ -1,5 +1,6 @@
 package app.controllers;
 
+import app.Launcher;
 import app.model.DialogData;
 import app.model.anime.Anime;
 import app.model.anime.enums.Genre;
@@ -14,6 +15,7 @@ import javafx.beans.binding.DoubleBinding;
 import javafx.beans.value.ChangeListener;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
+import javafx.geometry.Orientation;
 import javafx.scene.Node;
 import javafx.scene.Scene;
 import javafx.scene.chart.PieChart;
@@ -271,8 +273,10 @@ public class FavoritesController {
             var filler = new Pane();
             var year = new Label(item.year() != -1 ? String.valueOf(item.year()) : "unknown");
             var type = new Label(item.type().name);
+            var separator = new Separator(Orientation.VERTICAL);
+
             HBox.setHgrow(filler, Priority.SOMETIMES);
-            hBox.getChildren().addAll(title, filler, year, type);
+            hBox.getChildren().addAll(title, filler, year, separator, type);
             setGraphic(hBox);
 
             title.setOnMouseEntered(event -> this.showImage(item));
@@ -284,7 +288,10 @@ public class FavoritesController {
             var imgPlace = (ImageView)node.lookup("#image-holder");
             imgPlace.setImage(new Image(item.images().jpg().imageUrl()));
             var scene = new Scene(node);
-            scene.getStylesheets().add("/main.css");
+
+            scene.getStylesheets().add(
+                    Launcher.DARK_MODE ? "/main.css" : "/light.css");
+
             this.imageStage = new Stage();
             this.imageStage.setScene(scene);
             this.imageStage.initOwner(percents.getScene().getWindow());

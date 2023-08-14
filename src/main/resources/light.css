@@ -1,8 +1,8 @@
 
 .root {
-    -fx-accent: #1e74c6;
+    -fx-accent: #a7b9f1;
     -fx-focus-color: -fx-accent;
-    -fx-base: #373e43;
+    -fx-base: #ADD8E6;
     -fx-control-inner-background: derive(-fx-base, 35%);
     -fx-control-inner-background-alt: -fx-control-inner-background ;
 
@@ -10,21 +10,11 @@
     -fx-font-family: "Comic Sans MS";
 }
 
-.label{
-    -fx-text-fill: lightgray;
-}
-
-Text {
- -fx-fill: whitesmoke;
-}
-
 .text-field {
-    -fx-prompt-text-fill: gray;
+    -fx-prompt-text-fill: -fx-accent;
 }
-
 .titles{
     -fx-font-weight: bold;
-    -fx-text-fill: whitesmoke;
 }
 
 .button{
@@ -32,11 +22,11 @@ Text {
 }
 
 .button:hover{
-    -fx-text-fill: #FF1493;
+    -fx-text-fill: royalblue;
 }
 
 .button:hover > .ikonli-font-icon{
-    -fx-icon-color: #FF1493;
+    -fx-icon-color: royalblue;
 }
 
 .scroll-bar{
@@ -52,7 +42,7 @@ Text {
 }
 
 .img-holder{
-    -fx-border-color: crimson;
+    -fx-border-color: royalblue;
 }
 .filter-box{
     -fx-font-size: 12.5pt;
@@ -67,11 +57,11 @@ Text {
     -fx-background-insets: 0px;
 }
 .related-name:hover {
-    -fx-text-fill: #FF1493;
+    -fx-text-fill: royalblue;
 }
 
 .ikonli-font-icon{
-    -fx-icon-color: azure;
+    -fx-icon-color: #262626;
 }
 
 #like-icon {

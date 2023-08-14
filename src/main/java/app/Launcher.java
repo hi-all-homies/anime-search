@@ -11,6 +11,26 @@ import javafx.stage.Stage;
 public class Launcher extends Application {
     private Container container;
 
+    public static volatile Scene scene;
+    public static boolean DARK_MODE = true;
+
+    public static void setTheme(){
+        if (DARK_MODE){
+            scene.getStylesheets().clear();
+            scene.setUserAgentStylesheet(null);
+            scene.getStylesheets().add("/main.css");
+        }
+        else {
+            scene.getStylesheets().clear();
+            scene.setUserAgentStylesheet(null);
+            scene.getStylesheets().add("/light.css");
+        }
+    }
+
+    public static void changeTheme(){
+        DARK_MODE = ! DARK_MODE;
+    }
+
     @Override
     public void init() {
         this.container = new Container()
@@ -28,10 +48,11 @@ public class Launcher extends Application {
         double width = bounds.getWidth() * 80 / 100;
         double height = bounds.getHeight() * 85 / 100;
 
-        Scene scene = new Scene(root, width, height);
+        scene = new Scene(root, width, height);
         stage.setScene(scene);
         stage.getIcons().add(new Image("/assets/icon.png"));
         stage.setTitle("Anime searcher");
+        setTheme();
         stage.show();
     }
 

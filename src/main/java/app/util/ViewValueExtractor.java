@@ -34,7 +34,7 @@ public class ViewValueExtractor {
 
     public String getStatusStyle(Anime anime){
         return String.format("-fx-text-fill: %s", anime.status().equals(Status.COMPLETE) ?
-                "#ee4b2b" : anime.status().equals(Status.AIRING) ? "#50c878" : "#fccb06");
+                "#ee4b2b" : anime.status().equals(Status.AIRING) ? "#009933" : "#008080");
     }
 
     public String getSynopsis(Anime anime){

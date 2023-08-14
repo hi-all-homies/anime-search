@@ -1,5 +1,6 @@
 package app.controllers;
 
+import app.Launcher;
 import app.model.anime.Anime;
 import app.model.request.SearchRequest;
 import app.service.injector.ViewInjector;
@@ -107,6 +108,9 @@ public class AnimeController {
         imgPlace.setPreserveRatio(true);
 
         Scene scene = new Scene(imgHolder);
+        scene.getStylesheets().add(
+                Launcher.DARK_MODE ? "/main.css" : "/light.css");
+
         this.stage.setScene(scene);
         this.stage.show();
     }

@@ -1,5 +1,6 @@
 package app.controllers;
 
+import app.Launcher;
 import app.model.anime.Anime;
 import app.util.DataTransfer;
 import javafx.collections.FXCollections;
@@ -24,7 +25,9 @@ public class DialogController {
 
 
     public void initialize(){
-        this.dialog.getStylesheets().add("/main.css");
+        this.dialog.getStylesheets().add(
+                Launcher.DARK_MODE ? "/main.css" : "/light.css");
+
         var bounds = Screen.getPrimary().getBounds();
         this.dialog.setPrefSize(bounds.getWidth()*60/100, bounds.getHeight()*40/100);
 

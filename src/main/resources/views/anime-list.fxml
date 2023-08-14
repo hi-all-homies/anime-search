@@ -5,7 +5,7 @@
 <?import javafx.scene.layout.*?>
 <?import org.kordamp.ikonli.javafx.*?>
 
-<StackPane stylesheets="@../main.css" xmlns="http://javafx.com/javafx/11.0.14-internal" xmlns:fx="http://javafx.com/fxml/1" fx:controller="app.controllers.AnimeListController">
+<StackPane xmlns="http://javafx.com/javafx/11.0.14-internal" xmlns:fx="http://javafx.com/fxml/1" fx:controller="app.controllers.AnimeListController">
    <children>
       <BorderPane fx:id="single">
          <center>
@@ -17,7 +17,7 @@
                   <TextField fx:id="title" alignment="CENTER" editable="false" styleClass="copyable-title" HBox.hgrow="SOMETIMES" />
                   <Button fx:id="backBtn" graphicTextGap="10.0" mnemonicParsing="false" onAction="#submitBack" text="back">
                      <graphic>
-                        <FontIcon iconColor="azure" iconLiteral="fas-chevron-left" iconSize="25" />
+                        <FontIcon iconLiteral="fas-chevron-left" iconSize="25" />
                      </graphic>
                   </Button>
                </children>

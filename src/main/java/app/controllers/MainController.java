@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.concurrent.TimeUnit;
 import static app.model.request.RequestType.*;
+import app.Launcher;
 import app.model.anime.enums.AgeRating;
 import app.model.anime.enums.Genre;
 import app.model.anime.enums.Status;
@@ -37,8 +38,6 @@ public class MainController {
     public Tab genresTab;
     public Tab topTab;
     public Tab ongoingTab;
-
-
     public TitledPane filtersPane;
     public TilePane genresPane;
     private final ObservableMap<Integer, CheckBox> genreChoices = FXCollections.observableHashMap();
@@ -55,7 +54,6 @@ public class MainController {
     private final ObservableList<Status> searchStatuses = FXCollections.observableArrayList(
             Status.All, Status.AIRING, Status.UPCOMING, Status.COMPLETE);
     public Spinner<String> scoreSpinner;
-
 
 
     public MainController(Subject<SearchRequest> reqPublisher, ViewInjector viewInjector, DataTransfer dataService) {
@@ -114,6 +112,12 @@ public class MainController {
 
     private void emmitRequest() {
         this.reqPublisher.onNext(this.dataService.createRequest());
+    }
+
+
+    public void changeTheme(){
+        Launcher.changeTheme();
+        Launcher.setTheme();
     }
 
 

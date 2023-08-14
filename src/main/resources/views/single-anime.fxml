@@ -7,7 +7,7 @@
 <?import javafx.scene.text.*?>
 <?import org.kordamp.ikonli.javafx.*?>
 
-<VBox alignment="TOP_CENTER" spacing="10.0" stylesheets="@../main.css" xmlns="http://javafx.com/javafx/11.0.14-internal" xmlns:fx="http://javafx.com/fxml/1" fx:controller="app.controllers.SingleAnimeController">
+<VBox alignment="TOP_CENTER" spacing="10.0" xmlns="http://javafx.com/javafx/11.0.14-internal" xmlns:fx="http://javafx.com/fxml/1" fx:controller="app.controllers.SingleAnimeController">
    <children>
       <HBox spacing="10.0" VBox.vgrow="SOMETIMES">
          <children>
@@ -38,12 +38,12 @@
                   <Label fx:id="studio" text="studio" />
                   <Button fx:id="like" graphicTextGap="10.0" mnemonicParsing="false" onAction="#submitLike">
                      <graphic>
-                        <FontIcon fx:id="likeIcon" iconColor="crimson" iconSize="25" />
+                        <FontIcon fx:id="likeIcon" iconSize="25" id="like-icon"/>
                      </graphic>
                   </Button>
                   <Button fx:id="trailer" graphicTextGap="10.0" mnemonicParsing="false" onAction="#openTrailer" text="trailer">
                      <graphic>
-                        <FontIcon iconColor="azure" iconLiteral="fas-play" iconSize="25" />
+                        <FontIcon iconLiteral="fas-play" iconSize="25" />
                      </graphic>
                   </Button>
                </children>
